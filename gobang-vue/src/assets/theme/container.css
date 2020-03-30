@@ -1,0 +1,15 @@
+.shadow-container {
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    background: #FFF;
+    border: 1px solid lightgrey;
+    box-shadow: 0 0 25px #cac6c6;
+}
+.container {
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    background: #FFF;
+    border: 1px solid lightgrey;
+}
