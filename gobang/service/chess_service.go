@@ -14,7 +14,7 @@ func SetReady(rid string, pid string, ready bool) error {
 		return err
 	}
 
-	inRoom, role, i := isInRoom(pid, room)
+	inRoom, role, _ := isInRoom(pid, room)
 
 	if !inRoom {
 		err = fmt.Errorf("error: Player %v not in room %v", pid, rid)

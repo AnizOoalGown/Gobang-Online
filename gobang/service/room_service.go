@@ -8,6 +8,10 @@ import (
 	"log"
 )
 
+func GetRooms() (*[]entity.Room, error) {
+	return redis.GetRooms()
+}
+
 func isInRoom(pid string, room *entity.Room) (inRoom bool, role string, index int) {
 	if room.Host.Id == pid {
 		inRoom = true
@@ -124,9 +128,7 @@ func LeaveRoom(pid string, rid string) error {
 
 	inRoom, role, i := isInRoom(pid, r)
 	if !inRoom {
-		err = fmt.Errorf("error: Player %v not in room %v", pid, rid)
-		log.Println(err)
-		return err
+		return nil
 	}
 
 	if role == "host" {

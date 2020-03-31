@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a1d67664-71af-446e-9b96-75a50b560f38" name="Default Changelist" comment="" />
+    <list default="true" id="a1d67664-71af-446e-9b96-75a50b560f38" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../API Doc.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/constants/color.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/constants/msg_code.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/websocket/controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dto/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/dto/message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dto/response.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/chess_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/chess_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/hall_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/hall_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/room_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/room_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/websocket/websocket.go" beforeDir="false" afterPath="$PROJECT_DIR$/websocket/websocket.go" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,16 +29,23 @@
     </option>
   </component>
   <component name="GOROOT" path="C:/Program Files/Go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="GoLibraries">
     <option name="indexEntireGoPath" value="false" />
   </component>
   <component name="ProjectId" id="1Z7aLGfQYbyHmK6RaWYGcfhVvQx" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -32,9 +53,9 @@
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
-  <component name="RunManager" selected="Go Test.TestAddRoom in gobang/test">
+  <component name="RunManager" selected="Go Build.go build gobang">
     <configuration name="go build gobang" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="gobang" />
       <working_directory value="$PROJECT_DIR$" />
@@ -90,9 +111,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build gobang" />
         <item itemvalue="Go Test.TestAddRoom in gobang/test" />
         <item itemvalue="Go Test.TestAddRoom in gobang/test (1)" />
-        <item itemvalue="Go Build.go build gobang" />
         <item itemvalue="Go Test.TestLeaveRoom in gobang/test" />
         <item itemvalue="Go Test.TestEnterRoom in gobang/test" />
       </list>
@@ -100,6 +121,9 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -109,10 +133,11 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="361" y="71" key="#Go_Modules_(vgo)/0.0.1536.824@0.0.1536.824" timestamp="1584192831756" />
-    <state x="544" y="122" key="#com.intellij.ide.util.MemberChooser" timestamp="1584786422871">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state x="680" y="154" key="#com.intellij.ide.util.MemberChooser" timestamp="1585624824552">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="544" y="122" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824@0.0.1536.824" timestamp="1584786422871" />
+    <state x="680" y="154" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1585624824552" />
     <state x="425" y="189" key="EditFileWatcherDialog" timestamp="1584451256894">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -121,26 +146,31 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="547" y="142" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1585368228903" />
-    <state width="1493" height="210" key="GridCell.Tab.0.bottom" timestamp="1584966801326">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1340" height="266" key="GridCell.Tab.0.bottom" timestamp="1585646165830">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1584966801326" />
-    <state width="1493" height="210" key="GridCell.Tab.0.center" timestamp="1584966801326">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1340" height="266" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1585646165830" />
+    <state width="1340" height="266" key="GridCell.Tab.0.center" timestamp="1585646165830">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="210" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1584966801326" />
-    <state width="1493" height="210" key="GridCell.Tab.0.left" timestamp="1584966801325">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1340" height="266" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1585646165830" />
+    <state width="1340" height="266" key="GridCell.Tab.0.left" timestamp="1585646165830">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="210" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1584966801325" />
-    <state width="1493" height="210" key="GridCell.Tab.0.right" timestamp="1584966801326">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1340" height="266" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1585646165830" />
+    <state width="1340" height="266" key="GridCell.Tab.0.right" timestamp="1585646165830">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="210" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1584966801326" />
-    <state x="270" y="55" key="SettingsEditor" timestamp="1585368699494">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1340" height="266" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1585646165830" />
+    <state x="338" y="69" key="SettingsEditor" timestamp="1585622032321">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="270" y="55" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1585368699494" />
+    <state x="338" y="69" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1585622032321" />
     <state x="431" y="145" key="search.everywhere.popup" timestamp="1584962882871">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
