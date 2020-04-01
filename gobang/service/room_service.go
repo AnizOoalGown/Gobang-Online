@@ -34,29 +34,29 @@ func isInRoom(pid string, room *entity.Room) (inRoom bool, role string, index in
 	return
 }
 
-func EnterRoom(pid string, rid string, role string) error {
+func EnterRoom(pid string, rid string, role string) (*entity.Room, error) {
 	p, err := redis.GetPlayer(pid)
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	r, err := redis.GetRoom(rid)
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	if r.Host.Id == "" {
 		err = fmt.Errorf("error: Room %v has no host", rid)
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	if inRoom, _, _ := isInRoom(pid, r); inRoom {
 		err = fmt.Errorf("error: %v already in room %v", pid, rid)
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	if role == "challenger" {
@@ -72,20 +72,20 @@ func EnterRoom(pid string, rid string, role string) error {
 			p.Status = "spectating"
 			if err := SetPlayerStatus(pid, "spectating"); err != nil {
 				log.Println(err)
-				return err
+				return nil, err
 			}
 		}
 		r.Spectators = append(r.Spectators, *p)
 	} else {
 		err = fmt.Errorf("error: The role /'%v/' can't enter room", role)
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	if err = redis.SetRoom(r); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return r, nil
 }
 
 func CreateRoom(pid string, color int8) (*entity.Room, error) {

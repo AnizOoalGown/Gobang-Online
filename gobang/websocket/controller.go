@@ -15,13 +15,13 @@ func HallChat(s *melody.Session, msg *dto.Message) {
 	content, ok := msg.Data.(string)
 	if !ok {
 		err := fmt.Errorf("interface conversion: data is not string")
-		Send(s, dto.NewErrMsg(err))
+		SendErr(s, err)
 		return
 	}
 
 	p, err := service.GetPlayer(id.(string))
 	if err != nil {
-		Send(s, dto.NewErrMsg(err))
+		SendErr(s, err)
 		return
 	}
 
@@ -31,7 +31,7 @@ func HallChat(s *melody.Session, msg *dto.Message) {
 		Content: content,
 	}
 	if err := service.HallChat(dialogMsg); err != nil {
-		Send(s, dto.NewErrMsg(err))
+		SendErr(s, err)
 		return
 	}
 	msg = &dto.Message{
@@ -44,7 +44,7 @@ func HallChat(s *melody.Session, msg *dto.Message) {
 func GetHallDialog(s *melody.Session, msg *dto.Message) {
 	dialog, err := service.GetHallDialog()
 	if err != nil {
-		Send(s, dto.NewErrMsg(err))
+		SendErr(s, err)
 		return
 	}
 	msg.Data = dialog
@@ -54,7 +54,7 @@ func GetHallDialog(s *melody.Session, msg *dto.Message) {
 func GetRooms(s *melody.Session, msg *dto.Message) {
 	rooms, err := service.GetRooms()
 	if err != nil {
-		Send(s, dto.NewErrMsg(err))
+		SendErr(s, err)
 		return
 	}
 	msg.Data = rooms
@@ -65,16 +65,16 @@ func CreateRoom(s *melody.Session, msg *dto.Message) {
 	pidObj, _ := s.Get("id")
 	pid, _ := pidObj.(string)
 	//
-	color, ok := msg.Data.(int)
+	color, ok := msg.Data.(float64)
 	if !ok {
-		err := fmt.Errorf("interface conversion: data is not int")
-		Send(s, dto.NewErrMsg(err))
+		err := fmt.Errorf("interface conversion: data is not a number")
+		SendErr(s, err)
 		return
 	}
 
-	room, err := service.CreateRoom(pid, int8(msg.Data))
+	room, err := service.CreateRoom(pid, int8(color))
 	if err != nil {
-		Send(s, dto.NewErrMsg(err))
+		SendErr(s, err)
 		return
 	}
 
@@ -83,19 +83,20 @@ func CreateRoom(s *melody.Session, msg *dto.Message) {
 }
 
 func EnterRoom(s *melody.Session, msg *dto.Message) {
-	//pidObj, _ := s.Get("id")
-	//pid, _ := pidObj.(string)
-	//
-	//rid, ok := msg.Data.(string)
-	//if !ok {
-	//	err := fmt.Errorf("interface conversion: data is not string")
-	//	Send(s, dto.NewErrMsg(err))
-	//	return
-	//}
-	//
-	//if err := service.EnterRoom(pid, rid, msg.Info); err != nil {
-	//	Send(s, dto.NewErrMsg(err))
-	//	return
-	//}
-	//Broadcast(msg)
+	pidObj, _ := s.Get("id")
+	pid, _ := pidObj.(string)
+
+	data := msg.Data.(map[string]interface{})
+	rid := data["rid"].(string)
+	role := data["role"].(string)
+
+	room, err := service.EnterRoom(pid, rid, role)
+	if err != nil {
+		SendErr(s, err)
+		return
+	}
+
+	msg.Data = room
+
+	Send2Room(room, msg)
 }

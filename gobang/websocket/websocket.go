@@ -2,9 +2,11 @@ package websocket
 
 import (
 	"encoding/json"
+	"fmt"
 	uuid "github.com/satori/go.uuid"
 	"gobang/constants"
 	"gobang/dto"
+	"gobang/entity"
 	"gobang/service"
 	"gopkg.in/olahol/melody.v1"
 	"log"
@@ -50,11 +52,40 @@ func Send(s *melody.Session, msg *dto.Message) {
 	s.Write(msgByte)
 }
 
+func SendErr(s *melody.Session, err error) {
+	Send(s, dto.NewErrMsg(err))
+}
+
+func Send2PId(pid string, msg *dto.Message) {
+	sObj, ok := idSessionMap.Load(pid)
+	if !ok {
+		err := fmt.Errorf("error: can not load the value of %v from idSessionMap", pid)
+		log.Println(err)
+		return
+	}
+	s, ok := sObj.(*melody.Session)
+	if !ok {
+		err := fmt.Errorf("error: sObj is not type of *melody.Session")
+		log.Println(err)
+		return
+	}
+	Send(s, msg)
+}
+
+func Send2Room(r *entity.Room, msg *dto.Message) {
+	Send2PId(r.Host.Id, msg)
+	Send2PId(r.Challenger.Id, msg)
+	for _, spectator := range r.Spectators {
+		Send2PId(spectator.Id, msg)
+	}
+}
+
 func Receive(s *melody.Session, msgByte []byte) {
 	msg := &dto.Message{}
 	if err := json.Unmarshal(msgByte, msg); err != nil {
 		Send(s, dto.NewErrMsg(err))
 	}
+
 	switch msg.Code {
 	case constants.HallChat:
 		HallChat(s, msg)
@@ -64,6 +95,8 @@ func Receive(s *melody.Session, msgByte []byte) {
 		GetRooms(s, msg)
 	case constants.CreateRoom:
 		CreateRoom(s, msg)
+	case constants.EnterRoom:
+		EnterRoom(s, msg)
 	}
 }
 
