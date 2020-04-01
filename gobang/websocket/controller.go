@@ -36,26 +36,66 @@ func HallChat(s *melody.Session, msg *dto.Message) {
 	}
 	msg = &dto.Message{
 		Code: constants.HallChat,
-		Info: "",
 		Data: *dialogMsg,
 	}
 	Broadcast(msg)
 }
 
-func EnterRoom(s *melody.Session, msg *dto.Message) {
+func GetHallDialog(s *melody.Session, msg *dto.Message) {
+	dialog, err := service.GetHallDialog()
+	if err != nil {
+		Send(s, dto.NewErrMsg(err))
+		return
+	}
+	msg.Data = dialog
+	Send(s, msg)
+}
+
+func GetRooms(s *melody.Session, msg *dto.Message) {
+	rooms, err := service.GetRooms()
+	if err != nil {
+		Send(s, dto.NewErrMsg(err))
+		return
+	}
+	msg.Data = rooms
+	Send(s, msg)
+}
+
+func CreateRoom(s *melody.Session, msg *dto.Message) {
 	pidObj, _ := s.Get("id")
 	pid, _ := pidObj.(string)
-
-	rid, ok := msg.Data.(string)
+	//
+	color, ok := msg.Data.(int)
 	if !ok {
-		err := fmt.Errorf("interface conversion: data is not string")
+		err := fmt.Errorf("interface conversion: data is not int")
 		Send(s, dto.NewErrMsg(err))
 		return
 	}
 
-	if err := service.EnterRoom(pid, rid, msg.Info); err != nil {
+	room, err := service.CreateRoom(pid, int8(msg.Data))
+	if err != nil {
 		Send(s, dto.NewErrMsg(err))
 		return
 	}
-	Broadcast(msg)
+
+	msg.Data = room
+	Send(s, msg)
+}
+
+func EnterRoom(s *melody.Session, msg *dto.Message) {
+	//pidObj, _ := s.Get("id")
+	//pid, _ := pidObj.(string)
+	//
+	//rid, ok := msg.Data.(string)
+	//if !ok {
+	//	err := fmt.Errorf("interface conversion: data is not string")
+	//	Send(s, dto.NewErrMsg(err))
+	//	return
+	//}
+	//
+	//if err := service.EnterRoom(pid, rid, msg.Info); err != nil {
+	//	Send(s, dto.NewErrMsg(err))
+	//	return
+	//}
+	//Broadcast(msg)
 }

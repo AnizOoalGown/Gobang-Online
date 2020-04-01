@@ -5,7 +5,6 @@ const (
 	Success
 	HallChat
 	GetHallDialog
-	GetRoom
 	GetRooms
 	CreateRoom
 	EnterRoom

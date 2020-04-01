@@ -58,10 +58,12 @@ func Receive(s *melody.Session, msgByte []byte) {
 	switch msg.Code {
 	case constants.HallChat:
 		HallChat(s, msg)
+	case constants.GetHallDialog:
+		GetHallDialog(s, msg)
+	case constants.GetRooms:
+		GetRooms(s, msg)
 	case constants.CreateRoom:
-
-	case constants.EnterRoom:
-		EnterRoom(s, msg)
+		CreateRoom(s, msg)
 	}
 }
 

@@ -1,6 +1,6 @@
 package constants
 
 const (
-	BLACK = iota
+	BLACK int8 = iota
 	WHITE
 )
