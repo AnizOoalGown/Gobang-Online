@@ -5,6 +5,13 @@
 </template>
 
 <script>
+  import {initWebSocket} from "@/websocket/websocket";
+
+  export default {
+    mounted() {
+      initWebSocket()
+    }
+  }
 </script>
 
 <style>

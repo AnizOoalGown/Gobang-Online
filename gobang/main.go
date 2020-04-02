@@ -4,5 +4,5 @@ import "gobang/router"
 
 func main() {
 	r := router.InitRouter()
-	r.Run()
+	r.Run(":8080")
 }

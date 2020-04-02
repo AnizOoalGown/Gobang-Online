@@ -17,8 +17,8 @@
 </template>
 
 <script>
-    import '@/common/constants.js'
-    import constants from "@/common/constants";
+    import '@/constants/color.js'
+    import color from "@/constants/color";
 
     // let canvas;
     // let context
@@ -43,7 +43,7 @@
                 // canvas,
                 context: {},
                 steps: [],
-                turn: constants.black
+                turn: color.black
             }
         },
         methods: {
@@ -80,11 +80,11 @@
                 context.beginPath()
                 context.arc(m +i * d, m + j * d, r, 0, 2 * Math.PI)
                 context.closePath()
-                if (color === constants.black) {
+                if (color === color.black) {
                     context.fillStyle = '#000000'
                     context.fill()
                 }
-                else if (color === constants.white) {
+                else if (color === color.white) {
                     context.stroke()
                     context.fillStyle = '#FFFFFF'
                     context.fill()
