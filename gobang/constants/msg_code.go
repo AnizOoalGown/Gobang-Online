@@ -9,6 +9,7 @@ const (
 	CreateRoom
 	EnterRoom
 	LeaveRoom
+	DelRoom
 	RoomChat
 	GetPlayer
 	GetPlayers

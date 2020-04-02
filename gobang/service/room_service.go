@@ -119,24 +119,26 @@ func CreateRoom(pid string, color int8) (*entity.Room, error) {
 	return r, nil
 }
 
-func LeaveRoom(pid string, rid string) error {
+func LeaveRoom(pid string, rid string) (*entity.Room, error) {
 	r, err := redis.GetRoom(rid)
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	inRoom, role, i := isInRoom(pid, r)
 	if !inRoom {
-		return nil
+		return r, nil
 	}
 
 	if role == "host" {
 		if r.Challenger.Id == "" {
 			if err = redis.DelRoom(rid); err != nil {
 				log.Println(err)
-				return err
+				return nil, err
 			}
+			r.Host = entity.PlayerDetails{}
+			return r, nil
 		} else {
 			r.Host = r.Challenger
 		}
@@ -149,17 +151,17 @@ func LeaveRoom(pid string, rid string) error {
 
 	if err = redis.SetRoom(r); err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
-	return nil
+	return r, nil
 }
 
-func RoomChat(rid string, msg *entity.DialogMsg) error {
+func RoomChat(rid string, msg *entity.DialogMsg) (*entity.Room, error) {
 	r, err := redis.GetRoom(rid)
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	if len(r.Dialog) >= 10 {
@@ -168,8 +170,8 @@ func RoomChat(rid string, msg *entity.DialogMsg) error {
 	r.Dialog = append(r.Dialog, *msg)
 
 	if err = redis.SetRoom(r); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return r, nil
 }

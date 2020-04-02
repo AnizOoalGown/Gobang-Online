@@ -26,14 +26,27 @@ func InitMelody() *melody.Melody {
 	return m
 }
 
+func GetPId(s *melody.Session) (pid string, ok bool) {
+	pidObj, ok := s.Get("id")
+	if !ok {
+		return "", false
+	}
+	pid, ok = pidObj.(string)
+	return
+}
+
 func Connect(s *melody.Session) {
 	id := uuid.NewV4().String()
-	_, err := service.NewPlayerConnect(id)
+	player, err := service.NewPlayerConnect(id)
 	if err != nil {
 		return
 	}
 	idSessionMap.Store(id, s)
 	s.Set("id", id)
+	Send(s, &dto.Message{
+		Code: constants.GetPlayer,
+		Data: player,
+	})
 }
 
 func Disconnect(s *melody.Session) {
@@ -50,6 +63,13 @@ func Disconnect(s *melody.Session) {
 func Send(s *melody.Session, msg *dto.Message) {
 	msgByte, _ := json.Marshal(msg)
 	s.Write(msgByte)
+}
+
+func SendSuccess(s *melody.Session) {
+	Send(s, &dto.Message{
+		Code: constants.Success,
+		Data: "OK",
+	})
 }
 
 func SendErr(s *melody.Session, err error) {
@@ -73,8 +93,12 @@ func Send2PId(pid string, msg *dto.Message) {
 }
 
 func Send2Room(r *entity.Room, msg *dto.Message) {
-	Send2PId(r.Host.Id, msg)
-	Send2PId(r.Challenger.Id, msg)
+	if r.Host.Id != "" {
+		Send2PId(r.Host.Id, msg)
+	}
+	if r.Challenger.Id != "" {
+		Send2PId(r.Challenger.Id, msg)
+	}
 	for _, spectator := range r.Spectators {
 		Send2PId(spectator.Id, msg)
 	}
@@ -97,6 +121,22 @@ func Receive(s *melody.Session, msgByte []byte) {
 		CreateRoom(s, msg)
 	case constants.EnterRoom:
 		EnterRoom(s, msg)
+	case constants.LeaveRoom:
+		LeaveRoom(s, msg)
+	case constants.RoomChat:
+		RoomChat(s, msg)
+	case constants.GetPlayer:
+		GetPlayer(s, msg)
+	case constants.GetPlayers:
+		GetPlayers(s, msg)
+	case constants.PlayerRename:
+		PlayerRename(s, msg)
+	case constants.SetPlayerStatus:
+		SetPlayerStatus(s, msg)
+	case constants.SetReady:
+		SetReady(s, msg)
+	case constants.MakeStep:
+		MakeStep(s, msg)
 	}
 }
 

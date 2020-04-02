@@ -7,11 +7,11 @@ import (
 	"log"
 )
 
-func SetReady(rid string, pid string, ready bool) error {
+func SetReady(rid string, pid string, ready bool) (*entity.Room, error) {
 	room, err := redis.GetRoom(rid)
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	inRoom, role, _ := isInRoom(pid, room)
@@ -19,7 +19,7 @@ func SetReady(rid string, pid string, ready bool) error {
 	if !inRoom {
 		err = fmt.Errorf("error: Player %v not in room %v", pid, rid)
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	if role == "host" {
@@ -29,34 +29,34 @@ func SetReady(rid string, pid string, ready bool) error {
 	} else {
 		err = fmt.Errorf("error: Role %v cannot get ready", role)
 		log.Println(err)
-		return err
+		return nil, err
 	}
 	room.Started = room.Host.Ready && room.Challenger.Ready
 
 	if err = redis.SetRoom(room); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return room, nil
 }
 
-func MakeStep(rid string, c entity.Chess) error {
+func MakeStep(rid string, c entity.Chess) (*entity.Room, error) {
 	room, err := redis.GetRoom(rid)
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 	if room.Started {
 		room.Steps = append(room.Steps, c)
 	} else {
 		err = fmt.Errorf("error: Can not make step while game is not started")
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	if err = redis.SetRoom(room); err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
-	return nil
+	return room, nil
 }

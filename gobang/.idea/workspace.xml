@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a1d67664-71af-446e-9b96-75a50b560f38" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/test/websocket_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../API Doc.md" beforeDir="false" afterPath="$PROJECT_DIR$/../API Doc.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constants/msg_code.go" beforeDir="false" afterPath="$PROJECT_DIR$/constants/msg_code.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/chess_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/chess_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/player_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/player_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/room_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/room_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/websocket/controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/websocket/controller.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/websocket/websocket.go" beforeDir="false" afterPath="$PROJECT_DIR$/websocket/websocket.go" afterDir="false" />
@@ -48,7 +50,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
-  <component name="RunManager" selected="Go Test.TestSend2PId in gobang/test">
+  <component name="RunManager" selected="Go Build.go build gobang">
     <configuration name="go build gobang" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="gobang" />
       <working_directory value="$PROJECT_DIR$" />
@@ -104,8 +106,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Test.TestSend2PId in gobang/test" />
         <item itemvalue="Go Build.go build gobang" />
+        <item itemvalue="Go Test.TestSend2PId in gobang/test" />
         <item itemvalue="Go Test.TestAddRoom in gobang/test" />
         <item itemvalue="Go Test.TestAddRoom in gobang/test (1)" />
         <item itemvalue="Go Test.TestLeaveRoom in gobang/test" />
@@ -139,26 +141,26 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="547" y="142" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1585368228903" />
-    <state width="1493" height="210" key="GridCell.Tab.0.bottom" timestamp="1585756145429">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1340" height="266" key="GridCell.Tab.0.bottom" timestamp="1585818365426">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1585756145429" />
-    <state width="1340" height="266" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1585730195690" />
-    <state width="1493" height="210" key="GridCell.Tab.0.center" timestamp="1585756145428">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1340" height="266" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1585818365426" />
+    <state width="1340" height="266" key="GridCell.Tab.0.center" timestamp="1585818365426">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="210" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1585756145428" />
-    <state width="1340" height="266" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1585730195690" />
-    <state width="1493" height="210" key="GridCell.Tab.0.left" timestamp="1585756145428">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1340" height="266" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1585818365426" />
+    <state width="1340" height="266" key="GridCell.Tab.0.left" timestamp="1585818365426">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="210" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1585756145428" />
-    <state width="1340" height="266" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1585730195690" />
-    <state width="1493" height="210" key="GridCell.Tab.0.right" timestamp="1585756145429">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1340" height="266" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1585818365426" />
+    <state width="1340" height="266" key="GridCell.Tab.0.right" timestamp="1585818365426">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="210" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1585756145429" />
-    <state width="1340" height="266" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1585730195690" />
+    <state width="1340" height="266" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1585818365426" />
     <state x="338" y="69" key="SettingsEditor" timestamp="1585622032321">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

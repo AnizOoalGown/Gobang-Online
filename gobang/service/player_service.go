@@ -43,7 +43,7 @@ func PlayerDisconnect(id string) error {
 	}
 
 	for _, room := range *rooms {
-		_ = LeaveRoom(id, room.Id)
+		LeaveRoom(id, room.Id)
 	}
 
 	log.Println(id + " disconnects")

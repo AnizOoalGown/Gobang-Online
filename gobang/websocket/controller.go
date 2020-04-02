@@ -62,8 +62,7 @@ func GetRooms(s *melody.Session, msg *dto.Message) {
 }
 
 func CreateRoom(s *melody.Session, msg *dto.Message) {
-	pidObj, _ := s.Get("id")
-	pid, _ := pidObj.(string)
+	pid, _ := GetPId(s)
 	//
 	color, ok := msg.Data.(float64)
 	if !ok {
@@ -83,8 +82,7 @@ func CreateRoom(s *melody.Session, msg *dto.Message) {
 }
 
 func EnterRoom(s *melody.Session, msg *dto.Message) {
-	pidObj, _ := s.Get("id")
-	pid, _ := pidObj.(string)
+	pid, _ := GetPId(s)
 
 	data := msg.Data.(map[string]interface{})
 	rid := data["rid"].(string)
@@ -97,6 +95,146 @@ func EnterRoom(s *melody.Session, msg *dto.Message) {
 	}
 
 	msg.Data = room
+	Send2Room(room, msg)
+}
 
+func LeaveRoom(s *melody.Session, msg *dto.Message) {
+	pid, _ := GetPId(s)
+
+	rid, ok := msg.Data.(string)
+	if !ok {
+		err := fmt.Errorf("error: data is not string")
+		SendErr(s, err)
+		return
+	}
+
+	room, err := service.LeaveRoom(pid, rid)
+	if err != nil {
+		SendErr(s, err)
+		return
+	}
+
+	if room.Host.Id != "" {
+		msg.Data = room
+	} else {
+		msg.Code = constants.DelRoom
+		msg.Data = rid
+	}
+	Send2Room(room, msg)
+}
+
+func RoomChat(s *melody.Session, msg *dto.Message) {
+	data := msg.Data.(map[string]interface{})
+	from := data["from"].(string)
+	content := data["content"].(string)
+	rid := data["rid"].(string)
+
+	dialogMsg := &entity.DialogMsg{
+		Time:    time.Now().Format("2006-01-02 15:04:05"),
+		From:    from,
+		Content: content,
+	}
+
+	room, err := service.RoomChat(rid, dialogMsg)
+	if err != nil {
+		SendErr(s, err)
+		return
+	}
+
+	msg.Data = dialogMsg
+	Send2Room(room, msg)
+}
+
+func GetPlayer(s *melody.Session, msg *dto.Message) {
+	pid, _ := GetPId(s)
+	player, err := service.GetPlayer(pid)
+	if err != nil {
+		SendErr(s, err)
+		return
+	}
+
+	msg.Data = player
+	Send(s, msg)
+}
+
+func GetPlayers(s *melody.Session, msg *dto.Message) {
+	players, err := service.GetPlayers()
+	if err != nil {
+		SendErr(s, err)
+		return
+	}
+
+	msg.Data = players
+	Send(s, msg)
+}
+
+func PlayerRename(s *melody.Session, msg *dto.Message) {
+	pid, _ := GetPId(s)
+	name, ok := msg.Data.(string)
+	if !ok {
+		err := fmt.Errorf("interface conversion: data is not string")
+		SendErr(s, err)
+		return
+	}
+
+	if err := service.PlayerRename(pid, name); err != nil {
+		SendErr(s, err)
+		return
+	}
+}
+
+func SetPlayerStatus(s *melody.Session, msg *dto.Message) {
+	pid, _ := GetPId(s)
+	status, ok := msg.Data.(string)
+	if !ok {
+		err := fmt.Errorf("interface conversion: data is not string")
+		SendErr(s, err)
+		return
+	}
+
+	if err := service.SetPlayerStatus(pid, status); err != nil {
+		SendErr(s, err)
+		return
+	}
+
+	players, err := service.GetPlayers()
+	if err != nil {
+		SendErr(s, err)
+		return
+	}
+	msg.Code = constants.GetPlayers
+	msg.Data = players
+	Broadcast(msg)
+}
+
+func SetReady(s *melody.Session, msg *dto.Message) {
+	pid, _ := GetPId(s)
+	data := msg.Data.(map[string]interface{})
+	rid := data["rid"].(string)
+	ready := data["ready"].(bool)
+
+	room, err := service.SetReady(rid, pid, ready)
+	if err != nil {
+		SendErr(s, err)
+		return
+	}
+
+	Send2Room(room, msg)
+}
+
+func MakeStep(s *melody.Session, msg *dto.Message) {
+	data := msg.Data.(map[string]interface{})
+	rid := data["rid"].(string)
+	i := data["i"].(float64)
+	j := data["j"].(float64)
+	c := entity.Chess{
+		I: uint8(i),
+		J: uint8(j),
+	}
+	room, err := service.MakeStep(rid, c)
+	if err != nil {
+		SendErr(s, err)
+		return
+	}
 	Send2Room(room, msg)
 }
