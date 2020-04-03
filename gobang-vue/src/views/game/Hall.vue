@@ -2,7 +2,7 @@
     <el-row>
         <el-col :span="5">
             <PlayerTable/>
-            <Dialog/>
+            <Dialog roomId="hall"/>
         </el-col>
         <el-col :span="14">
             <RoomTable/>

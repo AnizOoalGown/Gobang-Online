@@ -1,7 +1,7 @@
 export default {
     Fail: 0,
     Success: 1,
-    HAllChat: 2,
+    HallChat: 2,
     GetHallDialog: 3,
     GetRooms: 4,
     CreateRoom: 5,

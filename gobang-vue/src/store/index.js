@@ -5,6 +5,16 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state: {
+        player: {
+            id: "x",
+            name: "x",
+            status: "x"
+        },
+        hallDialogMsg: {
+            "time": "2020-03-31 16:43:00",
+            "from": "sys",
+            "content": "Welcome to Gobang Online!"
+        },
         activeTabKey: 'hall',
         tabs: [{
             roomId: 'hall',
@@ -22,7 +32,9 @@ const store = new Vuex.Store({
     },
     getters: {
         tabs: state => state.tabs,
-        activeTabKey: state => state.activeTabKey
+        activeTabKey: state => state.activeTabKey,
+        player: state => state.player,
+        hallDialogMsg: state => state.hallDialogMsg
     },
     mutations: {
         addTab(state) {
@@ -45,6 +57,12 @@ const store = new Vuex.Store({
         },
         changeTab(state, roomId) {
             state.activeTabKey = roomId
+        },
+        setPlayer(state, player) {
+            state.player = player
+        },
+        setHallDialogMsg(state, dialogMsg) {
+            state.hallDialogMsg = dialogMsg
         }
     },
     actions: {
@@ -56,6 +74,12 @@ const store = new Vuex.Store({
         },
         changeTab({commit}, roomId) {
             commit('changeTab', roomId)
+        },
+        setPlayer({commit}, player) {
+            commit('setPlayer', player)
+        },
+        setHallDialogMsg({commit}, dialogMsg) {
+            commit('setHallDialogMsg', dialogMsg)
         }
     }
 })

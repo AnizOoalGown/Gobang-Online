@@ -14,9 +14,6 @@
 </template>
 
 <script>
-    import {send} from "@/websocket/websocket"
-    import code from "@/constants/msg-code"
-
     export default {
         name: "Login",
         data() {
@@ -26,10 +23,7 @@
         },
         methods: {
             onLogin() {
-                send({
-                    code: code.PlayerRename,
-                    data: this.input
-                })
+
                 this.$router.push('/game')
             }
         }

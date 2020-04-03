@@ -4,7 +4,11 @@
             <span class="title">Dialog</span>
         </div>
         <div class="scrollbar">
-            <p class="line" v-for="(item, index) in dialog" :key="index">{{ item.from }}: {{ item.content }}</p>
+            <div class="line" v-for="(item, index) in dialog" :key="index">
+                <span>{{item.time}}</span>
+                <br>
+                <span>{{ item.from }}: {{ item.content }}</span>
+            </div>
         </div>
         <div>
             <el-input size="mini" v-model="input" class="input"/>
@@ -14,29 +18,43 @@
 </template>
 
 <script>
+    import {hallChat} from "../websocket/send-api";
+
     export default {
         name: "Dialog",
+        props: ['roomId'],
         data() {
             return {
                 input: '',
-                dialog: [{
-                    from: 'Me',
-                    content: '111'
-                }, {
-                    from: 'Me',
-                    content: '222'
-                }]
+                dialog: []
             }
         },
         methods: {
             onSend() {
                 if (this.input !== '') {
-                    this.dialog.push({
-                        from: 'Me',
-                        content: this.input
-                    })
+                    // this.dialog.push({
+                    //     from: 'Me',
+                    //     content: this.input
+                    // })
+                    if (this.roomId === 'hall') {
+                        hallChat(this.input)
+                    }
+
                     this.input = ''
                 }
+            }
+        },
+        computed: {
+            dialogMsg() {
+                if (this.roomId === 'hall') {
+                    return this.$store.getters.hallDialogMsg
+                }
+                return {}
+            }
+        },
+        watch: {
+            dialogMsg(newMsg) {
+                this.dialog.push(newMsg)
             }
         }
     }
