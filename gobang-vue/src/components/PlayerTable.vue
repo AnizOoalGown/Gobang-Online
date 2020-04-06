@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="header">
-            <span class="title">Player List</span>
+            <span class="title">{{title}}</span>
         </div>
         <div class="scrollbar">
             <el-table :data="players" :show-header="false" size="mini">
@@ -13,65 +13,36 @@
 </template>
 
 <script>
+    import {getPlayers} from "@/websocket/send-api";
+
     export default {
         name: "PlayerTable",
+        props: ['roomId'],
         data() {
             return {
-                players: [{
-                    name: 'Tom',
-                    status: 'playing'
-                }, {
-                    name: 'Bob',
-                    status: 'leisure'
-                }, {
-                    name: 'Ann',
-                    status: 'spectating'
-                }, {
-                    name: 'Tom',
-                    status: 'playing'
-                }, {
-                    name: 'Bob',
-                    status: 'leisure'
-                }, {
-                    name: 'Ann',
-                    status: 'spectating'
-                }, {
-                    name: 'Tom',
-                    status: 'playing'
-                }, {
-                    name: 'Bob',
-                    status: 'leisure'
-                }, {
-                    name: 'Ann',
-                    status: 'spectating'
-                }, {
-                    name: 'Tom',
-                    status: 'playing'
-                }, {
-                    name: 'Bob',
-                    status: 'leisure'
-                }, {
-                    name: 'Ann',
-                    status: 'spectating'
-                }, {
-                    name: 'Tom',
-                    status: 'playing'
-                }, {
-                    name: 'Bob',
-                    status: 'leisure'
-                }, {
-                    name: 'Ann',
-                    status: 'spectating'
-                }, {
-                    name: 'Tom',
-                    status: 'playing'
-                }, {
-                    name: 'Bob',
-                    status: 'leisure'
-                }, {
-                    name: 'Ann',
-                    status: 'spectating'
-                }, ]
+                title: '',
+                players: []
+            }
+        },
+        computed: {
+            playerTable() {
+                return this.$store.getters.playerTable
+            }
+        },
+        watch: {
+            playerTable(newTable) {
+                if (newTable.roomId === this.roomId) {
+                    this.players = newTable.players
+                }
+            }
+        },
+        mounted() {
+            getPlayers()
+            if (this.roomId === 'hall') {
+                this.title = 'Player List'
+            }
+            else {
+                this.title = 'Spectator List'
             }
         }
     }

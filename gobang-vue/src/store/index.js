@@ -10,6 +10,25 @@ const store = new Vuex.Store({
             name: "x",
             status: "x"
         },
+        playerTable: {
+            roomId: '',
+            players: []
+        },
+        matchDetails: {
+            roomId: '',
+            host: {
+                name: 'Tom',
+                color: 'black',
+                turn: true,
+                roomStatus: 'ready'
+            },
+            challenger: {
+                name: 'Ann',
+                color: 'white',
+                turn: false,
+                roomStatus: 'unready'
+            }
+        },
         hallDialogMsg: {
             "time": "2020-03-31 16:43:00",
             "from": "sys",
@@ -20,40 +39,44 @@ const store = new Vuex.Store({
             roomId: 'hall',
             title: '【Hall】',
             type: 'hall'
-        }, {
-            roomId: 'qwe123',
-            title: '【Room】A vs B',
-            type: 'room'
-        }, {
-            roomId: 'xyz123',
-            title: '【Room】C vs D',
-            type: 'room'
-        }]
+        }],
+        rooms: []
     },
     getters: {
         tabs: state => state.tabs,
         activeTabKey: state => state.activeTabKey,
         player: state => state.player,
-        hallDialogMsg: state => state.hallDialogMsg
+        playerTable: state => state.playerTable,
+        matchDetails: state => state.matchDetails,
+        hallDialogMsg: state => state.hallDialogMsg,
+        rooms: state => state.rooms
     },
     mutations: {
-        addTab(state) {
-            let roomId = Math.random().toString(36).slice(-8)
-            state.tabs.push({
-                roomId,
-                title: '【Room】X vs X',
-                type: 'room'
-            })
+        addTab(state, room) {
+            let newTab = {
+                roomId: room.id,
+                title: '【Room】'+ room.host.name + ' vs ' + room.challenger.name,
+                type: 'room',
+            }
+            for (let i in state.tabs) {
+                if (state.tabs[i].roomId === room.id) {
+                    state.tabs[i] = newTab
+                    return
+                }
+            }
+            state.tabs.push(newTab)
         },
         removeTab(state, roomId) {
-            let tabIndex
+            let tabIndex = -1
             state.tabs.forEach((tab, i) => {
                 if (tab.roomId === roomId) {
                     tabIndex = i
                 }
             })
-            state.tabs.splice(tabIndex, 1)
-            state.activeTabKey = 'hall'
+            if (tabIndex !== -1) {
+                state.tabs.splice(tabIndex, 1)
+                state.activeTabKey = 'hall'
+            }
         },
         changeTab(state, roomId) {
             state.activeTabKey = roomId
@@ -61,13 +84,38 @@ const store = new Vuex.Store({
         setPlayer(state, player) {
             state.player = player
         },
+        playerRename(state, name) {
+            state.player.name = name
+        },
+        setPlayerTable(state, playerTable) {
+            state.playerTable = playerTable
+        },
+        setMatchDetails(state, matchDetails) {
+            state.matchDetails = matchDetails
+        },
         setHallDialogMsg(state, dialogMsg) {
             state.hallDialogMsg = dialogMsg
+        },
+        setRooms(state, rooms) {
+            state.rooms = rooms
+        },
+        addRoom(state, room) {
+            state.rooms.push(room)
+        },
+        delRoomById(state, roomId) {
+            let i
+            for (i in state.rooms) {
+                if (state.rooms[i].id === roomId) {
+                    break
+                }
+            }
+            console.log(i)
+            state.rooms.splice(i, 1)
         }
     },
     actions: {
-        addTab({commit}) {
-            commit('addTab')
+        addTab({commit}, room) {
+            commit('addTab', room)
         },
         removeTab({commit}, roomId) {
             commit('removeTab', roomId)
@@ -78,8 +126,26 @@ const store = new Vuex.Store({
         setPlayer({commit}, player) {
             commit('setPlayer', player)
         },
+        playerRename({commit}, name) {
+            commit('playerRename', name)
+        },
+        setPlayerTable({commit}, playerTable) {
+            commit('setPlayerTable', playerTable)
+        },
+        setMatchDetails({commit}, matchDetails) {
+            commit('setMatchDetails', matchDetails)
+        },
         setHallDialogMsg({commit}, dialogMsg) {
             commit('setHallDialogMsg', dialogMsg)
+        },
+        setRooms({commit}, rooms) {
+            commit('setRooms', rooms)
+        },
+        addRoom({commit}, room) {
+            commit('addRoom', room)
+        },
+        delRoomById({commit}, roomId) {
+            commit('delRoomById', roomId)
         }
     }
 })

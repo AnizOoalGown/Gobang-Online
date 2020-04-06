@@ -14,6 +14,8 @@
 </template>
 
 <script>
+    import {playerRename} from "@/websocket/send-api";
+
     export default {
         name: "Login",
         data() {
@@ -23,7 +25,7 @@
         },
         methods: {
             onLogin() {
-
+                playerRename(this.input)
                 this.$router.push('/game')
             }
         }

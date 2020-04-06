@@ -1,5 +1,6 @@
 import code from "../constants/msg-code"
 import {send} from "./websocket"
+import store from "@/store";
 
 export function hallChat(content) {
     send(code.HallChat, content)
@@ -49,6 +50,7 @@ export function getPlayers() {
 }
 
 export function playerRename(name) {
+    store.dispatch('playerRename', name)
     send(code.PlayerRename, name)
 }
 

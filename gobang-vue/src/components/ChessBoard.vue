@@ -19,6 +19,7 @@
 <script>
     import '@/constants/color.js'
     import color from "@/constants/color";
+    import {leaveRoom} from "@/websocket/send-api";
 
     // let canvas;
     // let context
@@ -121,6 +122,7 @@
             },
             onExit() {
                 this.$store.dispatch('removeTab', this.roomId)
+                leaveRoom(this.roomId)
             },
             onDraw() {
                 console.log(this.steps)

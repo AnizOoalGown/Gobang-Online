@@ -119,6 +119,7 @@ func LeaveRoom(s *melody.Session, msg *dto.Message) {
 	} else {
 		msg.Code = constants.DelRoom
 		msg.Data = rid
+		Send(s, msg)
 	}
 	Send2Room(room, msg)
 }
@@ -141,7 +142,15 @@ func RoomChat(s *melody.Session, msg *dto.Message) {
 		return
 	}
 
-	msg.Data = dialogMsg
+	roomChatDTO := struct {
+		RoomId string `json:"rid"`
+		entity.DialogMsg
+	}{
+		rid,
+		*dialogMsg,
+	}
+
+	msg.Data = roomChatDTO
 	Send2Room(room, msg)
 }
 

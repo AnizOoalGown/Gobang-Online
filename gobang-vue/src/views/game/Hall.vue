@@ -1,7 +1,7 @@
 <template>
     <el-row>
         <el-col :span="5">
-            <PlayerTable/>
+            <PlayerTable roomId="hall"/>
             <Dialog roomId="hall"/>
         </el-col>
         <el-col :span="14">

@@ -11,7 +11,7 @@
             </div>
             <el-form>
                 <el-form-item label="color">
-                    <div :class="host.color"/>
+                    <div :class="getChessClass(host.color)"/>
                 </el-form-item>
                 <el-form-item label="role">host</el-form-item>
                 <el-form-item label="turn">{{host.turn}}</el-form-item>
@@ -24,7 +24,7 @@
             </div>
             <el-form>
                 <el-form-item label="color">
-                    <div :class="challenger.color"/>
+                    <div :class="getChessClass(challenger.color)"/>
                 </el-form-item>
                 <el-form-item label="role">challenger</el-form-item>
                 <el-form-item label="turn">{{challenger.turn}}</el-form-item>
@@ -34,21 +34,38 @@
 </template>
 
 <script>
+    import color from "@/constants/color";
+
     export default {
         name: "MatchDetails",
+        props: ['roomId'],
         data() {
             return {
-                host: {
-                    name: 'Tom',
-                    color: 'black',
-                    turn: true,
-                    roomStatus: 'ready'
-                },
-                challenger: {
-                    name: 'Ann',
-                    color: 'white',
-                    turn: false,
-                    roomStatus: 'unready'
+                host: {},
+                challenger: {}
+            }
+        },
+        methods: {
+            getChessClass(playerColor) {
+                if (playerColor === color.black) {
+                    return 'black'
+                }
+                else if (playerColor === color.white) {
+                    return 'white'
+                }
+                return ''
+            }
+        },
+        computed: {
+            matchDetails() {
+                return this.$store.getters.matchDetails
+            }
+        },
+        watch: {
+            matchDetails(details) {
+                if (details.roomId === this.roomId) {
+                    this.host = details.host
+                    this.challenger = details.challenger
                 }
             }
         }

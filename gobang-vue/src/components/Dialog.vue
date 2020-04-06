@@ -5,7 +5,7 @@
         </div>
         <div class="scrollbar">
             <div class="line" v-for="(item, index) in dialog" :key="index">
-                <span>{{item.time}}</span>
+                <span style="font-size: xx-small">{{item.time}}</span>
                 <br>
                 <span>{{ item.from }}: {{ item.content }}</span>
             </div>
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-    import {hallChat} from "../websocket/send-api";
+    import {getHallDialog, hallChat} from "../websocket/send-api";
 
     export default {
         name: "Dialog",
@@ -42,6 +42,12 @@
 
                     this.input = ''
                 }
+            },
+            addDialogMsg(msg) {
+                if (this.dialog.length >= 10) {
+                    this.dialog.splice(0, 1)
+                }
+                this.dialog.push(msg)
             }
         },
         computed: {
@@ -54,7 +60,12 @@
         },
         watch: {
             dialogMsg(newMsg) {
-                this.dialog.push(newMsg)
+                this.addDialogMsg(newMsg)
+            }
+        },
+        mounted() {
+            if (this.roomId === 'hall') {
+                getHallDialog()
             }
         }
     }
@@ -76,6 +87,7 @@
         padding-top: 100px;
     }
     .line {
+        margin-top: 5px;
         margin-left: 3%;
         font-size: small;
     }

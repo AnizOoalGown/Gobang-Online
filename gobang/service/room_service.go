@@ -85,6 +85,9 @@ func EnterRoom(pid string, rid string, role string) (*entity.Room, error) {
 	if err = redis.SetRoom(r); err != nil {
 		return nil, err
 	}
+
+	//New player enters room can't see the dialog before
+	r.Dialog = make([]entity.DialogMsg, 0)
 	return r, nil
 }
 
@@ -104,12 +107,14 @@ func CreateRoom(pid string, color int8) (*entity.Room, error) {
 	}
 
 	r := &entity.Room{
-		Id:         uuid.NewV4().String(),
-		Dialog:     make([]entity.DialogMsg, 0),
-		Steps:      make([]entity.Chess, 0),
-		Started:    false,
-		Host:       h,
-		Challenger: entity.PlayerDetails{},
+		Id:      uuid.NewV4().String(),
+		Dialog:  make([]entity.DialogMsg, 0),
+		Steps:   make([]entity.Chess, 0),
+		Started: false,
+		Host:    h,
+		Challenger: entity.PlayerDetails{
+			Color: 1 - color,
+		},
 		Spectators: make([]entity.Player, 0),
 	}
 

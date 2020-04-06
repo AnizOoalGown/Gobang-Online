@@ -14,11 +14,41 @@ function onMessage(e) {
     let msg = JSON.parse(e.data)
     let data = msg.data
     switch(msg.code) {
+        case code.Fail:
+            receive.fail(data)
+            break
         case code.HallChat:
             receive.hallChat(data)
             break
+        case code.GetHallDialog:
+            receive.getHallDialog(data)
+            break
+        case code.GetRooms:
+            receive.getRooms(data)
+            break
+        case code.CreateRoom:
+            receive.createRoom(data)
+            break
+        case code.EnterRoom:
+            receive.enterRoom(data)
+            break
+        case code.LeaveRoom:
+            receive.leaveRoom(data)
+            break
+        case code.DelRoom:
+            receive.delRoom(data)
+            break
         case code.GetPlayer:
             receive.getPlayer(data)
+            break
+        case code.GetPlayers:
+            receive.getPlayers(data)
+            break
+        case code.SetReady:
+            receive.setReady(data)
+            break
+        case code.MakeStep:
+            receive.makeStep(data)
             break
         default:
             break

@@ -42,6 +42,7 @@ func GetRoom(id string) (*entity.Room, error) {
 
 	b, err := redis.Bytes(conn.Do("HGET", "room", id))
 	if err != nil {
+		err = fmt.Errorf("redis: room with id '%v' not found", id)
 		return nil, err
 	}
 	r := &entity.Room{}

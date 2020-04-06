@@ -180,7 +180,7 @@ Request from a player
     "data": {
         "from": "Tom",
         "content": "Hello!",
-        "rid": "5f62dd12-80b8-4f4b-99c6-d606a8eea2c4"
+        "rid": "bbc8dca5-55e7-4954-a1ce-7c4afc06ed1f"
     }
 }
 ```
@@ -189,11 +189,12 @@ Response to the players in the room
 
 ```json
 {
-    "code":9,
-    "data":{
-        "time":"2020-04-02 15:04:31",
-        "from":"Tom",
-        "content":"Hello!"
+    "code": 9,
+    "data": {
+        "rid": "bbc8dca5-55e7-4954-a1ce-7c4afc06ed1f",
+        "time": "2020-04-04 21:55:07",
+        "from": "Tom",
+        "content": "Hello!"
     }
 }
 ```
@@ -251,7 +252,7 @@ Request from a player
 Response to all players
 
 ```json
-
+{"code":11,"data":[{"id":"cf67d081-7637-4901-93af-9d4b3c824ba8","name":"unnamed","status":"leisure"},{"id":"c6f2cf85-503e-4a97-b104-06e7964c08e1","name":"unnamed","status":"leisure"},{"id":"bcfccae8-5027-4a33-ae1b-11e789951eaa","name":"unnamed","status":"leisure"},{"id":"e54d5c3c-5618-447f-b255-eb0666f90450","name":"unnamed","status":"leisure"},{"id":"41c1faa2-d88f-4b96-a17f-fb6400672b39","name":"unnamed","status":"leisure"},{"id":"74d655af-3916-4400-9611-e8ad1618d5e4","name":"unnamed","status":"leisure"},{"id":"12b2b259-1812-4095-80c7-67420d146b67","name":"unnamed","status":"leisure"},{"id":"e5e3cc75-da05-4e89-9fce-4639a9821768","name":"unnamed","status":"leisure"},{"id":"f1572da9-8710-48d6-99c1-d8b85bc368df","name":"unnamed","status":"leisure"},{"id":"937cce34-3ecf-401e-953d-d85ae3d16960","name":"unnamed","status":"leisure"}]}
 ```
 
 

@@ -3,18 +3,35 @@
         <div class="header">
             <span class="title">Chess Room List</span>
             <el-button size="mini" @click="onCreateRoom" style="float: right; margin-right: 10px">create room</el-button>
+            <el-button size="mini" @click="onRefresh" style="float: right; margin-right: 10px">refresh</el-button>
         </div>
+
+        <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="25%">
+            <el-form>
+                <el-form-item label="Your Color">
+                    <el-select v-model="dialog.color">
+                        <el-option label="black" :value="0"></el-option>
+                        <el-option label="white" :value="1"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="onDialogConfirm" size="small">confirm</el-button>
+                <el-button @click="dialog.visible = false" size="small">cancel</el-button>
+            </div>
+        </el-dialog>
+
         <el-table :data="rooms" class="scrollbar" :show-header="false">
             <el-table-column label="room">
                 <div slot-scope="props" style="display: inline-block">
-                    <div :class="props.row.player1.color"></div>
-                    <div style="float: left">{{props.row.player1.name}} vs {{props.row.player2.name}}</div>
-                    <div :class="props.row.player2.color"></div>
+                    <div :class="getChessClass(props.row.host)"></div>
+                    <div style="float: left">{{props.row.host.name}} vs {{props.row.challenger.name}}</div>
+                    <div :class="getChessClass(props.row.challenger)"></div>
                 </div>
             </el-table-column>
             <el-table-column align="right">
                 <template slot-scope="scope">
-                    <el-button size="mini" @click="onChallenge(scope.row)">challenge</el-button>
+                    <el-button size="mini" @click="onChallenge(scope.row)" v-if="challengeShow(scope.row)">challenge</el-button>
                     <el-button size="mini" @click="onSpectate(scope.row)">spectate</el-button>
                 </template>
             </el-table-column>
@@ -23,41 +40,57 @@
 </template>
 
 <script>
+    import {createRoom, enterRoom, getRooms} from "@/websocket/send-api"
+    import color from "@/constants/color"
+
     export default {
         name: "RoomTable",
         data() {
             return {
-                rooms: [{
-                    player1: {
-                        name: 'Tom',
-                        color: 'white'
-                    },
-                    player2: {
-                        name: 'May',
-                        color: 'black'
-                    },
-                }, {
-                    player1: {
-                        name: 'Meow',
-                        color: 'black'
-                    },
-                    player2: {
-                        name: 'Aoo',
-                        color: 'white'
-                    },
-                }]
+                dialog: {
+                    title: 'Create Room',
+                    visible: false,
+                    color: color.black
+                }
             }
         },
         methods: {
+            onDialogConfirm() {
+                createRoom(this.dialog.color)
+                this.dialog.visible = false
+            },
             onCreateRoom() {
-
+                this.dialog.visible = true
             },
             onChallenge(room) {
-                console.log(room)
+                enterRoom(room.id, "challenger")
             },
             onSpectate(room) {
-                console.log(room)
+                enterRoom(room.id, "spectator")
+            },
+            onRefresh() {
+                getRooms()
+            },
+            getChessClass(player) {
+                if (player.id !== '' && player.color === color.black) {
+                    return 'black'
+                }
+                else if (player.id !== '' && player.color === color.white) {
+                    return 'white'
+                }
+                return ''
+            },
+            challengeShow(room) {
+                return room.challenger.id === ''
             }
+        },
+        computed: {
+            rooms() {
+                return this.$store.getters.rooms
+            }
+        },
+        mounted() {
+            getRooms()
         }
     }
 </script>
