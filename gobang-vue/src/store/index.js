@@ -29,6 +29,7 @@ const store = new Vuex.Store({
                 roomStatus: 'unready'
             }
         },
+        roomChatDTO: {},
         hallDialogMsg: {
             "time": "2020-03-31 16:43:00",
             "from": "sys",
@@ -48,6 +49,7 @@ const store = new Vuex.Store({
         player: state => state.player,
         playerTable: state => state.playerTable,
         matchDetails: state => state.matchDetails,
+        roomChatDTO: state => state.roomChatDTO,
         hallDialogMsg: state => state.hallDialogMsg,
         rooms: state => state.rooms
     },
@@ -93,6 +95,9 @@ const store = new Vuex.Store({
         setMatchDetails(state, matchDetails) {
             state.matchDetails = matchDetails
         },
+        setRoomChatDTO(state, roomChatDTO) {
+            state.roomChatDTO = roomChatDTO
+        },
         setHallDialogMsg(state, dialogMsg) {
             state.hallDialogMsg = dialogMsg
         },
@@ -109,7 +114,6 @@ const store = new Vuex.Store({
                     break
                 }
             }
-            console.log(i)
             state.rooms.splice(i, 1)
         }
     },
@@ -134,6 +138,9 @@ const store = new Vuex.Store({
         },
         setMatchDetails({commit}, matchDetails) {
             commit('setMatchDetails', matchDetails)
+        },
+        setRoomChatDTO({commit}, roomChatDTO) {
+            commit('setRoomChatDTO', roomChatDTO)
         },
         setHallDialogMsg({commit}, dialogMsg) {
             commit('setHallDialogMsg', dialogMsg)

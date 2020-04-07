@@ -18,7 +18,7 @@
 </template>
 
 <script>
-    import {getHallDialog, hallChat} from "../websocket/send-api";
+    import {getHallDialog, hallChat, roomChat} from "../websocket/send-api";
 
     export default {
         name: "Dialog",
@@ -32,14 +32,12 @@
         methods: {
             onSend() {
                 if (this.input !== '') {
-                    // this.dialog.push({
-                    //     from: 'Me',
-                    //     content: this.input
-                    // })
                     if (this.roomId === 'hall') {
                         hallChat(this.input)
                     }
-
+                    else {
+                        roomChat(this.$store.getters.player.name, this.input, this.roomId)
+                    }
                     this.input = ''
                 }
             },
@@ -55,11 +53,16 @@
                 if (this.roomId === 'hall') {
                     return this.$store.getters.hallDialogMsg
                 }
-                return {}
+                else {
+                    return this.$store.getters.roomChatDTO
+                }
             }
         },
         watch: {
             dialogMsg(newMsg) {
+                if (this.roomId !== 'hall' && newMsg.rid !== this.roomId) {
+                    return
+                }
                 this.addDialogMsg(newMsg)
             }
         },

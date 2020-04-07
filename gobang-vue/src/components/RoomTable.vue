@@ -42,6 +42,7 @@
 <script>
     import {createRoom, enterRoom, getRooms} from "@/websocket/send-api"
     import color from "@/constants/color"
+    import {setPlayerStatus} from "../websocket/send-api";
 
     export default {
         name: "RoomTable",
@@ -67,6 +68,9 @@
             },
             onSpectate(room) {
                 enterRoom(room.id, "spectator")
+                if (this.$store.getters.player.status === "leisure") {
+                    setPlayerStatus("spectating")
+                }
             },
             onRefresh() {
                 getRooms()

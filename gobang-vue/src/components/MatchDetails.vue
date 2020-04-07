@@ -6,8 +6,9 @@
         <div class="scrollbar">
             <div class="role">
                 {{host.name}}
-                <el-button style="margin-left: 10%" size="medium" v-if="host.roomStatus==='unready'">ready</el-button>
-                <span style="margin-left: 10%" v-else-if="host.roomStatus==='ready'">ready!</span>
+                <el-button style="margin-left: 10%" size="medium" v-if="readyBtnShow(host)" @click="onReady">ready</el-button>
+                <span style="margin-left: 10%" v-else-if="host.ready===false">unready</span>
+                <span style="margin-left: 10%" v-else-if="host.ready===true">ready!</span>
             </div>
             <el-form>
                 <el-form-item label="color">
@@ -19,8 +20,9 @@
             <el-divider/>
             <div class="role">
                 {{challenger.name}}
-                <el-button style="margin-left: 10%" size="medium" v-if="challenger.roomStatus==='unready'">ready</el-button>
-                <span style="margin-left: 10%" v-else-if="challenger.roomStatus==='ready'">ready!</span>
+                <el-button style="margin-left: 10%" size="medium" v-if="readyBtnShow(challenger)" @click="onReady">ready</el-button>
+                <span style="margin-left: 10%" v-else-if="challenger.ready===false">unready</span>
+                <span style="margin-left: 10%" v-else-if="challenger.ready===true">ready!</span>
             </div>
             <el-form>
                 <el-form-item label="color">
@@ -35,6 +37,7 @@
 
 <script>
     import color from "@/constants/color";
+    import {setPlayerStatus, setReady} from "../websocket/send-api";
 
     export default {
         name: "MatchDetails",
@@ -54,11 +57,27 @@
                     return 'white'
                 }
                 return ''
+            },
+            readyBtnShow(playerDetails) {
+                return playerDetails.id === this.$store.getters.player.id && playerDetails.ready === false
+            },
+            onReady() {
+                setReady(this.roomId, true)
+            },
+            isPlayer() {
+                let id = this.$store.getters.player.id
+                return id === this.host.id || id === this.challenger.id
             }
         },
         computed: {
             matchDetails() {
                 return this.$store.getters.matchDetails
+            },
+            playerStatus() {
+                return this.$store.getters.player.status
+            },
+            started() {
+                return this.host.ready && this.challenger.ready
             }
         },
         watch: {
@@ -66,6 +85,24 @@
                 if (details.roomId === this.roomId) {
                     this.host = details.host
                     this.challenger = details.challenger
+                }
+            },
+            playerStatus(newStatus) {
+                if (newStatus !== "chessing" && this.started && this.isPlayer()) {
+                    setPlayerStatus("chessing")
+                }
+                else if (newStatus === "leisure" && !this.isPlayer()) {
+                    setPlayerStatus("spectating")
+                }
+            },
+            started(newStarted) {
+                if(this.isPlayer()) {
+                    if (newStarted) {
+                        setPlayerStatus("chessing")
+                    }
+                    else {
+                        setPlayerStatus("leisure")
+                    }
                 }
             }
         }

@@ -38,6 +38,9 @@ function onMessage(e) {
         case code.DelRoom:
             receive.delRoom(data)
             break
+        case code.RoomChat:
+            receive.roomChat(data)
+            break
         case code.GetPlayer:
             receive.getPlayer(data)
             break

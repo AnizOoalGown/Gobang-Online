@@ -34,7 +34,7 @@ export function delRoom(rid) {
 }
 
 export function roomChat(from, content, rid) {
-    send(code.DelRoom, {
+    send(code.RoomChat, {
         from,
         content,
         rid

@@ -51,7 +51,7 @@ export default {
         store.dispatch('delRoomById', roomId)
     },
     roomChat(roomChatDTO) {
-        console.log(roomChatDTO)
+        store.dispatch('setRoomChatDTO', roomChatDTO)
     },
 
     getPlayer(player) {
@@ -64,8 +64,12 @@ export default {
         }
         store.dispatch('setPlayerTable', playerTable)
     },
-    setReady(readyDTO) {
-        console.log(readyDTO)
+    setReady(room) {
+        store.dispatch('setMatchDetails', {
+            roomId: room.id,
+            host: room.host,
+            challenger: room.challenger
+        })
     },
     makeStep(stepDTO) {
         console.log(stepDTO)

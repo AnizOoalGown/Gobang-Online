@@ -190,6 +190,16 @@ func PlayerRename(s *melody.Session, msg *dto.Message) {
 		SendErr(s, err)
 		return
 	}
+
+	msg.Code = constants.GetPlayers
+	players, err := service.GetPlayers()
+	if err != nil {
+		SendErr(s, err)
+		return
+	}
+
+	msg.Data = players
+	Broadcast(msg)
 }
 
 func SetPlayerStatus(s *melody.Session, msg *dto.Message) {
@@ -228,6 +238,7 @@ func SetReady(s *melody.Session, msg *dto.Message) {
 		return
 	}
 
+	msg.Data = room
 	Send2Room(room, msg)
 }
 

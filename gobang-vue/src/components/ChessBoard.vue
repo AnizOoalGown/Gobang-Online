@@ -17,9 +17,9 @@
 </template>
 
 <script>
-    import '@/constants/color.js'
-    import color from "@/constants/color";
-    import {leaveRoom} from "@/websocket/send-api";
+    import color from "../constants/color";
+    import {leaveRoom, makeStep} from "../websocket/send-api";
+    import {setPlayerStatus} from "../websocket/send-api";
 
     // let canvas;
     // let context
@@ -44,7 +44,7 @@
                 // canvas,
                 context: {},
                 steps: [],
-                turn: color.black
+                myColor: -1,
             }
         },
         methods: {
@@ -62,7 +62,7 @@
                 //     // context.strokeStyle = '#B9B9B9';
                 //     context.lineWidth = 1
                 //     this.drawChessboard()
-                //     this.drawChess(7, 7, constants.black)
+                //     this.drawChess(7, 7, color.black)
                 // }
             },
             drawChessboard() {
@@ -76,16 +76,16 @@
                     context.stroke();
                 }
             },
-            drawChess(i, j, color) {
+            drawChess(i, j, turn) {
                 let context = this.context
                 context.beginPath()
                 context.arc(m +i * d, m + j * d, r, 0, 2 * Math.PI)
                 context.closePath()
-                if (color === color.black) {
+                if (turn === color.black) {
                     context.fillStyle = '#000000'
                     context.fill()
                 }
-                else if (color === color.white) {
+                else if (turn === color.white) {
                     context.stroke()
                     context.fillStyle = '#FFFFFF'
                     context.fill()
@@ -103,15 +103,17 @@
                 return false
             },
             onClick(e) {
+                if (!this.myTurn) {
+                    return
+                }
                 let x = e.offsetX
                 let y = e.offsetY
                 let i = Math.floor(x / d)
                 let j = Math.floor(y / d)
                 if (!this.hasStep(i, j)) {
-                    let turn = this.turn
-                    this.drawChess(i, j, turn)
+                    this.drawChess(i, j, this.turn)
                     this.steps.push({i, j})
-                    this.turn = 1 - turn
+                    makeStep(this.roomId, i, j)
                 }
             },
             onRetract() {
@@ -123,6 +125,7 @@
             onExit() {
                 this.$store.dispatch('removeTab', this.roomId)
                 leaveRoom(this.roomId)
+                setPlayerStatus("leisure")
             },
             onDraw() {
                 console.log(this.steps)
@@ -134,7 +137,37 @@
             window.onresize = () => {
                 this.initCanvas()
             }
+        },
+        computed: {
+            matchDetails() {
+                return this.$store.getters.matchDetails
+            },
+            turn() {
+                return this.steps.length % 2
+            },
+            myTurn() {
+                return this.turn === this.myColor
+            }
+        },
+        watch: {
+            matchDetails(details) {
+                if (details.roomId === this.roomId) {
+                    if (details.host.ready && details.challenger.ready) {
+                        let id = this.$store.getters.player.id
+                        if (details.host.id === id) {
+                            this.myColor = details.host.color
+                            return
+                        }
+                        else if (details.challenger.id === id) {
+                            this.myColor = details.challenger.color
+                            return
+                        }
+                    }
+                    this.myColor = -1
+                }
+            }
         }
+
     }
 </script>
 
