@@ -110,7 +110,7 @@ Request from a player
 Response to all players
 
 ```json
-{"code":5,"data":{"id":"34c1bd1f-b27c-4dcc-9521-3dcccf673e53","dialog":[],"steps":[],"started":false,"host":{"id":"937cce34-3ecf-401e-953d-d85ae3d16960","name":"unnamed","status":"leisure","role":"host","color":0,"turn":false,"ready":false},"challenger":{"id":"","name":"","status":"","role":"","color":0,"turn":false,"ready":false},"spectators":[]}}
+{"code":5,"data":{"id":"34c1bd1f-b27c-4dcc-9521-3dcccf673e53","dialog":[],"steps":[],"started":false,"host":{"id":"937cce34-3ecf-401e-953d-d85ae3d16960","name":"unnamed","status":"leisure","role":"host","color":0,"turn":false,"ready":false},"challenger":{"id":"","name":"","status":"","role":"","color":0,"ready":false},"spectators":[]}}
 ```
 
 ## Enter Room
@@ -265,7 +265,7 @@ Response to all players
 
 
 
-## Set Ready
+## Set Ready(Set Match Details)
 
 Request from a player
 
@@ -312,3 +312,33 @@ Request from a player
 ## Retract Step
 
 ## Ask Draw
+
+## Game Over
+
+Send to the players in the room
+
+```json
+{
+    "code": "18",
+    "data": {
+        "rid": "",
+        "winner": {
+            "id":"",
+            "name":"",
+            "status":"",
+            "role":"",
+            "color":0,
+            "ready":false
+        },
+        "loser": {
+            "id":"",
+            "name":"",
+            "status":"",
+            "role":"",
+            "color":0,
+            "ready":false
+        },
+    }
+}
+```
+

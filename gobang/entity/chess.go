@@ -1,6 +1,6 @@
 package entity
 
 type Chess struct {
-	I uint8
-	J uint8
+	I int8 `json:"i"`
+	J int8 `json:"j"`
 }

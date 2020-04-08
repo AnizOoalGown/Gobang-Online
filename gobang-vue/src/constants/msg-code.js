@@ -16,5 +16,6 @@ export default {
     SetReady: 14,
     MakeStep: 15,
     RetractStep: 16,
-    AskDraw: 17
+    AskDraw: 17,
+    GameOver: 18
 }

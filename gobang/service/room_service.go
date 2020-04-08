@@ -64,7 +64,6 @@ func EnterRoom(pid string, rid string, role string) (*entity.Room, error) {
 			Player: *p,
 			Role:   role,
 			Color:  1 - r.Host.Color,
-			Turn:   false,
 			Ready:  false,
 		}
 	} else if role == "spectator" {
@@ -102,7 +101,6 @@ func CreateRoom(pid string, color int8) (*entity.Room, error) {
 		Player: *p,
 		Role:   "host",
 		Color:  color,
-		Turn:   false,
 		Ready:  false,
 	}
 

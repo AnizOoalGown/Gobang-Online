@@ -15,7 +15,6 @@
                     <div :class="getChessClass(host.color)"/>
                 </el-form-item>
                 <el-form-item label="role">host</el-form-item>
-                <el-form-item label="turn">{{host.turn}}</el-form-item>
             </el-form>
             <el-divider/>
             <div class="role">
@@ -29,7 +28,6 @@
                     <div :class="getChessClass(challenger.color)"/>
                 </el-form-item>
                 <el-form-item label="role">challenger</el-form-item>
-                <el-form-item label="turn">{{challenger.turn}}</el-form-item>
             </el-form>
         </div>
     </div>

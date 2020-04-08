@@ -19,4 +19,5 @@ const (
 	MakeStep
 	RetractStep
 	AskDraw
+	GameOver
 )

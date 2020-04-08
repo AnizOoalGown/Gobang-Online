@@ -53,6 +53,9 @@ function onMessage(e) {
         case code.MakeStep:
             receive.makeStep(data)
             break
+        case code.GameOver:
+            receive.gameOver(data)
+            break
         default:
             break
     }

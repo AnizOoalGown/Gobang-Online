@@ -5,6 +5,5 @@ type PlayerDetails struct {
 	Player
 	Role  string `json:"role"`
 	Color int8   `json:"color"`
-	Turn  bool   `json:"turn"`
 	Ready bool   `json:"ready"`
 }

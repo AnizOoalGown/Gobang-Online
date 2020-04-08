@@ -71,8 +71,11 @@ export default {
             challenger: room.challenger
         })
     },
-    makeStep(stepDTO) {
-        console.log(stepDTO)
+    makeStep(step) {
+        store.dispatch('setStep', step)
+    },
+    gameOver(gameOverDTO) {
+        store.dispatch('setGameOverDTO', gameOverDTO)
     }
 }
 

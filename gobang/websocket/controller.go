@@ -6,6 +6,7 @@ import (
 	"gobang/dto"
 	"gobang/entity"
 	"gobang/service"
+	"gobang/util"
 	"gopkg.in/olahol/melody.v1"
 	"time"
 )
@@ -248,8 +249,8 @@ func MakeStep(s *melody.Session, msg *dto.Message) {
 	i := data["i"].(float64)
 	j := data["j"].(float64)
 	c := entity.Chess{
-		I: uint8(i),
-		J: uint8(j),
+		I: int8(i),
+		J: int8(j),
 	}
 	room, err := service.MakeStep(rid, c)
 	if err != nil {
@@ -257,4 +258,34 @@ func MakeStep(s *melody.Session, msg *dto.Message) {
 		return
 	}
 	Send2Room(room, msg)
+	CheckGameOver(room)
+}
+
+func SendGameOver(room *entity.Room, gameOverDTO *dto.GameOverDTO) {
+	msg := &dto.Message{
+		Code: constants.GameOver,
+		Data: *gameOverDTO,
+	}
+
+	Send2Room(room, msg)
+}
+
+func CheckGameOver(room *entity.Room) {
+	hasFive, color := util.CheckFiveOfLastStep(&room.Steps)
+	if !hasFive {
+		return
+	}
+	if room.Host.Color == color {
+		SendGameOver(room, &dto.GameOverDTO{
+			RId:    room.Id,
+			Winner: room.Host,
+			Loser:  room.Challenger,
+		})
+	} else {
+		SendGameOver(room, &dto.GameOverDTO{
+			RId:    room.Id,
+			Winner: room.Challenger,
+			Loser:  room.Host,
+		})
+	}
 }

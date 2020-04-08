@@ -102,6 +102,13 @@
                 }
                 return false
             },
+            chess(i, j) {
+                if (!this.hasStep(i, j)) {
+                    this.drawChess(i, j, this.turn)
+                    this.steps.push({i, j})
+                    makeStep(this.roomId, i, j)
+                }
+            },
             onClick(e) {
                 if (!this.myTurn) {
                     return
@@ -110,11 +117,7 @@
                 let y = e.offsetY
                 let i = Math.floor(x / d)
                 let j = Math.floor(y / d)
-                if (!this.hasStep(i, j)) {
-                    this.drawChess(i, j, this.turn)
-                    this.steps.push({i, j})
-                    makeStep(this.roomId, i, j)
-                }
+                this.chess(i, j)
             },
             onRetract() {
                 let lastIndex = this.steps.length - 1
@@ -147,6 +150,12 @@
             },
             myTurn() {
                 return this.turn === this.myColor
+            },
+            step() {
+                return this.$store.getters.step
+            },
+            gameOverDTO() {
+                return this.$store.getters.gameOverDTO
             }
         },
         watch: {
@@ -164,6 +173,16 @@
                         }
                     }
                     this.myColor = -1
+                }
+            },
+            step(step) {
+                if (step.rid === this.roomId) {
+                    this.chess(step.i, step.j)
+                }
+            },
+            gameOverDTO(gameOverDTO) {
+                if (gameOverDTO.rid === this.roomId) {
+                    this.$message.info(gameOverDTO.winner.name + ' win')
                 }
             }
         }

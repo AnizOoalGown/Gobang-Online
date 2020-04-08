@@ -34,7 +34,6 @@ func TestAddRoom(t *testing.T) {
 		},
 		Role:  "host",
 		Color: 0,
-		Turn:  false,
 		Ready: false,
 	}
 	room := &entity.Room{

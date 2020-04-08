@@ -14,6 +14,7 @@ const store = new Vuex.Store({
             roomId: '',
             players: []
         },
+        step: {},
         matchDetails: {
             roomId: '',
             host: {
@@ -30,6 +31,7 @@ const store = new Vuex.Store({
             }
         },
         roomChatDTO: {},
+        gameOverDTO: {},
         hallDialogMsg: {
             "time": "2020-03-31 16:43:00",
             "from": "sys",
@@ -48,8 +50,10 @@ const store = new Vuex.Store({
         activeTabKey: state => state.activeTabKey,
         player: state => state.player,
         playerTable: state => state.playerTable,
+        step: state => state.step,
         matchDetails: state => state.matchDetails,
         roomChatDTO: state => state.roomChatDTO,
+        gameOverDTO: state => state.gameOverDTO,
         hallDialogMsg: state => state.hallDialogMsg,
         rooms: state => state.rooms
     },
@@ -92,11 +96,17 @@ const store = new Vuex.Store({
         setPlayerTable(state, playerTable) {
             state.playerTable = playerTable
         },
+        setStep(state, step) {
+            state.step = step
+        },
         setMatchDetails(state, matchDetails) {
             state.matchDetails = matchDetails
         },
         setRoomChatDTO(state, roomChatDTO) {
             state.roomChatDTO = roomChatDTO
+        },
+        setGameOverDTO(state, gameOverDTO) {
+            state.gameOverDTO = gameOverDTO
         },
         setHallDialogMsg(state, dialogMsg) {
             state.hallDialogMsg = dialogMsg
@@ -136,11 +146,17 @@ const store = new Vuex.Store({
         setPlayerTable({commit}, playerTable) {
             commit('setPlayerTable', playerTable)
         },
+        setStep({commit}, step) {
+            commit('setStep', step)
+        },
         setMatchDetails({commit}, matchDetails) {
             commit('setMatchDetails', matchDetails)
         },
         setRoomChatDTO({commit}, roomChatDTO) {
             commit('setRoomChatDTO', roomChatDTO)
+        },
+        setGameOverDTO({commit}, gameOverDTO) {
+            commit('setGameOverDTO', gameOverDTO)
         },
         setHallDialogMsg({commit}, dialogMsg) {
             commit('setHallDialogMsg', dialogMsg)
