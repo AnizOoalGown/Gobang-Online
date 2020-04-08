@@ -2,8 +2,9 @@ package util
 
 import "gobang/entity"
 
-func HasStep(i int8, j int8, steps *[]entity.Chess) bool {
-	for _, step := range *steps {
+func HasStep(i int8, j int8, color int8, steps *[]entity.Chess) bool {
+	for k := int(color); k < len(*steps); k += 2 {
+		step := (*steps)[k]
 		if step.I == i && step.J == j {
 			return true
 		}
@@ -11,17 +12,17 @@ func HasStep(i int8, j int8, steps *[]entity.Chess) bool {
 	return false
 }
 
-func checkFiveInDirection(i int8, j int8, x int8, y int8, steps *[]entity.Chess) bool {
+func checkFiveInDirection(i int8, j int8, color int8, x int8, y int8, steps *[]entity.Chess) bool {
 	count := 1
 	for m, n := i-x, j-y; m > 0 && n > 0 && m < 15 && n < 15; m, n = m-x, n-y {
-		if HasStep(m, n, steps) {
+		if HasStep(m, n, color, steps) {
 			count++
 		} else {
 			break
 		}
 	}
 	for m, n := i+x, j+y; m > 0 && n > 0 && m < 15 && n < 15; m, n = m+x, n+y {
-		if HasStep(m, n, steps) {
+		if HasStep(m, n, color, steps) {
 			count++
 		} else {
 			break
@@ -40,10 +41,10 @@ func CheckFiveOfLastStep(steps *[]entity.Chess) (bool, int8) {
 	i := lastStep.I
 	j := lastStep.J
 
-	hasFive := checkFiveInDirection(i, j, 1, 0,
-		steps) || checkFiveInDirection(i, j, 0, 1,
-		steps) || checkFiveInDirection(i, j, 1, 1,
-		steps) || checkFiveInDirection(i, j, 1, -1, steps)
+	hasFive := checkFiveInDirection(i, j, color, 1, 0,
+		steps) || checkFiveInDirection(i, j, color, 0, 1,
+		steps) || checkFiveInDirection(i, j, color, 1, 1,
+		steps) || checkFiveInDirection(i, j, color, 1, -1, steps)
 
 	return hasFive, color
 }

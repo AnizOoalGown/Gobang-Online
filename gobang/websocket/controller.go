@@ -275,6 +275,7 @@ func CheckGameOver(room *entity.Room) {
 	if !hasFive {
 		return
 	}
+
 	if room.Host.Color == color {
 		SendGameOver(room, &dto.GameOverDTO{
 			RId:    room.Id,

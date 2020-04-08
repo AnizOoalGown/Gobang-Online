@@ -103,11 +103,8 @@
                 return false
             },
             chess(i, j) {
-                if (!this.hasStep(i, j)) {
-                    this.drawChess(i, j, this.turn)
-                    this.steps.push({i, j})
-                    makeStep(this.roomId, i, j)
-                }
+                this.drawChess(i, j, this.turn)
+                this.steps.push({i, j})
             },
             onClick(e) {
                 if (!this.myTurn) {
@@ -117,7 +114,10 @@
                 let y = e.offsetY
                 let i = Math.floor(x / d)
                 let j = Math.floor(y / d)
-                this.chess(i, j)
+                if (!this.hasStep(i, j)) {
+                    this.chess(i, j)
+                    makeStep(this.roomId, i, j)
+                }
             },
             onRetract() {
                 let lastIndex = this.steps.length - 1
@@ -137,9 +137,9 @@
         mounted() {
             this.initCanvas()
             // 当调整窗口大小时重绘canvas
-            window.onresize = () => {
-                this.initCanvas()
-            }
+            // window.onresize = () => {
+            //     this.initCanvas()
+            // }
         },
         computed: {
             matchDetails() {
@@ -176,13 +176,14 @@
                 }
             },
             step(step) {
-                if (step.rid === this.roomId) {
+                if (step.rid === this.roomId && !this.hasStep(step.i, step.j)) {
                     this.chess(step.i, step.j)
                 }
             },
             gameOverDTO(gameOverDTO) {
                 if (gameOverDTO.rid === this.roomId) {
                     this.$message.info(gameOverDTO.winner.name + ' win')
+                    this.myColor = -1
                 }
             }
         }

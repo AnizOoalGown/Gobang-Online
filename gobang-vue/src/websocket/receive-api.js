@@ -46,7 +46,6 @@ export default {
         store.dispatch('addTab', room)
     },
     delRoom(roomId) {
-        console.log('delRoom' + roomId)
         store.dispatch('removeTab', roomId)
         store.dispatch('delRoomById', roomId)
     },
