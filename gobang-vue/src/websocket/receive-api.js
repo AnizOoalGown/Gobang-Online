@@ -31,6 +31,10 @@ export default {
                 host: room.host,
                 challenger: room.challenger
             })
+            store.dispatch('setChessboard', {
+                roomId: room.id,
+                steps: room.steps
+            })
         })
     },
     leaveRoom(room) {

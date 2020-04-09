@@ -14,14 +14,14 @@ func HasStep(i int8, j int8, color int8, steps *[]entity.Chess) bool {
 
 func checkFiveInDirection(i int8, j int8, color int8, x int8, y int8, steps *[]entity.Chess) bool {
 	count := 1
-	for m, n := i-x, j-y; m > 0 && n > 0 && m < 15 && n < 15; m, n = m-x, n-y {
+	for m, n := i-x, j-y; m >= 0 && n >= 0 && m < 15 && n < 15; m, n = m-x, n-y {
 		if HasStep(m, n, color, steps) {
 			count++
 		} else {
 			break
 		}
 	}
-	for m, n := i+x, j+y; m > 0 && n > 0 && m < 15 && n < 15; m, n = m+x, n+y {
+	for m, n := i+x, j+y; m >= 0 && n >= 0 && m < 15 && n < 15; m, n = m+x, n+y {
 		if HasStep(m, n, color, steps) {
 			count++
 		} else {

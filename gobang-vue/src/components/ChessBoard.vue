@@ -16,7 +16,7 @@
 </template>
 
 <script>
-    import color from "../constants/color";
+    import constant from "../constants/color";
     import {leaveRoom, makeStep, surrender} from "../websocket/send-api";
     import {setPlayerStatus} from "../websocket/send-api";
 
@@ -77,20 +77,36 @@
                     context.stroke();
                 }
             },
-            drawChess(i, j, turn) {
+            drawChess(i, j, color) {
                 let context = this.context
                 context.beginPath()
                 context.arc(m +i * d, m + j * d, r, 0, 2 * Math.PI)
                 context.closePath()
-                if (turn === color.black) {
+                if (color === constant.black) {
                     context.fillStyle = '#000000'
                     context.fill()
                 }
-                else if (turn === color.white) {
+                else if (color === constant.white) {
                     context.stroke()
                     context.fillStyle = '#FFFFFF'
                     context.fill()
                 }
+            },
+            labelStep(i, j, color) {
+                let context = this.context
+                context.beginPath()
+                context.arc(m +i * d, m + j * d, r / 3, 0, 2 * Math.PI)
+                context.closePath()
+                if (color === constant.black) {
+                    context.fillStyle = '#000000'
+                }
+                else if (color === constant.white) {
+                    context.fillStyle = '#FFFFFF'
+                }
+                else {
+                    context.fillStyle = '#FFB90F'
+                }
+                context.fill()
             },
             removeChess(i, j) {
                 this.context.clearRect((i) * d, (j) * d, d, d);
@@ -104,8 +120,14 @@
                 return false
             },
             chess(i, j) {
-                this.drawChess(i, j, this.turn)
                 this.steps.push({i, j})
+                this.drawChess(i, j, 1 - this.turn)
+                this.labelStep(i, j, -1)
+                if (this.steps.length > 1) {
+                    let index = this.steps.length - 2
+                    let c = this.steps[index]
+                    this.labelStep(c.i, c.j, index % 2)
+                }
             },
             onClick(e) {
                 if (!this.myTurn) {
@@ -121,6 +143,7 @@
                 }
             },
             onRetract() {
+                this.$message.info('The function of retracting step is not developed')
                 // let lastIndex = this.steps.length - 1
                 // let step = this.steps[lastIndex]
                 // this.removeChess(step.i, step.j)
@@ -160,6 +183,9 @@
             },
             gameOverDTO() {
                 return this.$store.getters.gameOverDTO
+            },
+            chessboard() {
+                return this.$store.getters.chessboard
             }
         },
         watch: {
@@ -200,6 +226,14 @@
                         this.title = gameOverDTO.loser.name + ' gives up. Winner: ' + gameOverDTO.winner.name
                     }
                     this.myColor = -1
+                }
+            },
+            chessboard(chessboard) {
+                if (chessboard.roomId === this.roomId) {
+                    this.steps = chessboard.steps
+                    this.steps.forEach((step, index) => {
+                        this.drawChess(step.i, step.j, index % 2)
+                    })
                 }
             }
         }

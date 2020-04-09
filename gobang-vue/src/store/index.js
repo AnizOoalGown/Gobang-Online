@@ -15,6 +15,10 @@ const store = new Vuex.Store({
             players: []
         },
         step: {},
+        chessboard: {
+            roomId: '',
+            steps: []
+        },
         matchDetails: {
             roomId: '',
             host: {
@@ -51,6 +55,7 @@ const store = new Vuex.Store({
         player: state => state.player,
         playerTable: state => state.playerTable,
         step: state => state.step,
+        chessboard: state => state.chessboard,
         matchDetails: state => state.matchDetails,
         roomChatDTO: state => state.roomChatDTO,
         gameOverDTO: state => state.gameOverDTO,
@@ -98,6 +103,9 @@ const store = new Vuex.Store({
         },
         setStep(state, step) {
             state.step = step
+        },
+        setChessboard(state, chessboard) {
+            state.chessboard = chessboard
         },
         setMatchDetails(state, matchDetails) {
             state.matchDetails = matchDetails
@@ -148,6 +156,9 @@ const store = new Vuex.Store({
         },
         setStep({commit}, step) {
             commit('setStep', step)
+        },
+        setChessboard({commit}, chessboard) {
+            commit('setChessboard', chessboard)
         },
         setMatchDetails({commit}, matchDetails) {
             commit('setMatchDetails', matchDetails)
