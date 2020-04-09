@@ -18,6 +18,7 @@ const (
 	SetReady
 	MakeStep
 	RetractStep
+	Surrender
 	AskDraw
 	GameOver
 )

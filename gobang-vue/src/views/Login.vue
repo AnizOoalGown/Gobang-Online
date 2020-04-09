@@ -25,8 +25,10 @@
         },
         methods: {
             onLogin() {
-                playerRename(this.input)
-                this.$router.push('/game')
+                if (this.input !== '') {
+                    playerRename(this.input)
+                    this.$router.push('/game')
+                }
             }
         }
     }

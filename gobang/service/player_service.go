@@ -29,25 +29,14 @@ func GetPlayers() (*[]entity.Player, error) {
 	return redis.GetPlayers()
 }
 
-func PlayerDisconnect(id string) error {
+func PlayerDisconnect(id string) (*[]entity.Room, error) {
 	err := redis.DelPlayer(id)
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
-
-	rooms, err := redis.GetRooms()
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-
-	for _, room := range *rooms {
-		LeaveRoom(id, room.Id)
-	}
-
 	log.Println(id + " disconnects")
-	return nil
+	return redis.GetRooms()
 }
 
 func PlayerRename(id string, newName string) error {

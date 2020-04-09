@@ -6,7 +6,6 @@ import (
 	"gobang/dto"
 	"gobang/entity"
 	"gobang/service"
-	"gobang/util"
 	"gopkg.in/olahol/melody.v1"
 	"time"
 )
@@ -109,7 +108,7 @@ func LeaveRoom(s *melody.Session, msg *dto.Message) {
 		return
 	}
 
-	room, err := service.LeaveRoom(pid, rid)
+	room, gameOverDTO, err := service.LeaveRoom(pid, rid)
 	if err != nil {
 		SendErr(s, err)
 		return
@@ -123,6 +122,10 @@ func LeaveRoom(s *melody.Session, msg *dto.Message) {
 		Send(s, msg)
 	}
 	Send2Room(room, msg)
+
+	if gameOverDTO != nil {
+		SendGameOver(room, gameOverDTO)
+	}
 }
 
 func RoomChat(s *melody.Session, msg *dto.Message) {
@@ -258,35 +261,47 @@ func MakeStep(s *melody.Session, msg *dto.Message) {
 		return
 	}
 	Send2Room(room, msg)
-	CheckGameOver(room)
+	CheckFive(room)
 }
 
-func SendGameOver(room *entity.Room, gameOverDTO *dto.GameOverDTO) {
-	msg := &dto.Message{
-		Code: constants.GameOver,
-		Data: *gameOverDTO,
+func CheckFive(room *entity.Room) {
+	over, gameOverDTO := service.CheckFive(room)
+	if over {
+		SendGameOver(room, gameOverDTO)
+		Send2Room(room, &dto.Message{
+			Code: constants.SetReady,
+			Data: *room,
+		})
 	}
-
-	Send2Room(room, msg)
 }
 
-func CheckGameOver(room *entity.Room) {
-	hasFive, color := util.CheckFiveOfLastStep(&room.Steps)
-	if !hasFive {
+func RetractStep(s *melody.Session, msg *dto.Message) {
+
+}
+
+func Surrender(s *melody.Session, msg *dto.Message) {
+	pid, _ := GetPId(s)
+
+	rid, ok := msg.Data.(string)
+	if !ok {
+		err := fmt.Errorf("error: data is not string")
+		SendErr(s, err)
 		return
 	}
 
-	if room.Host.Color == color {
-		SendGameOver(room, &dto.GameOverDTO{
-			RId:    room.Id,
-			Winner: room.Host,
-			Loser:  room.Challenger,
-		})
-	} else {
-		SendGameOver(room, &dto.GameOverDTO{
-			RId:    room.Id,
-			Winner: room.Challenger,
-			Loser:  room.Host,
-		})
+	gameOverDTO, room, err := service.Surrender(pid, rid)
+	if err != nil {
+		SendErr(s, err)
+		return
 	}
+
+	SendGameOver(room, gameOverDTO)
+	Send2Room(room, &dto.Message{
+		Code: constants.SetReady,
+		Data: *room,
+	})
+}
+
+func AskDraw(s *melody.Session, msg *dto.Message) {
+
 }

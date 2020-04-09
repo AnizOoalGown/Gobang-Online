@@ -1,24 +1,23 @@
 <template>
     <el-container>
-        <el-header style="height: 20px">
+        <el-header style="height: 20px; display: block; text-align: center">
+            <span v-if="!started" style="font-size: large; font-weight: bold">{{title}}</span>
             <el-button size="mini" style="float: right" @click="onExit()">Exit</el-button>
         </el-header>
         <el-main>
             <canvas :id="roomId" @click="onClick">Your browser doesn't support canvas</canvas>
         </el-main>
         <el-footer align="center" style="height: 20px">
-            <el-button size="mini" @click="onRetract()">retract</el-button>
-            <el-button size="mini">surrender</el-button>
-            <el-button size="mini" @click="onDraw()">draw</el-button>
-
+            <el-button size="mini" @click="onRetract()" :disabled="myColor===-1">retract</el-button>
+            <el-button size="mini" @click="onSurrender()" :disabled="myColor===-1">surrender</el-button>
+            <el-button size="mini" @click="onDraw()" :disabled="myColor===-1">draw</el-button>
         </el-footer>
     </el-container>
-
 </template>
 
 <script>
     import color from "../constants/color";
-    import {leaveRoom, makeStep} from "../websocket/send-api";
+    import {leaveRoom, makeStep, surrender} from "../websocket/send-api";
     import {setPlayerStatus} from "../websocket/send-api";
 
     // let canvas;
@@ -45,6 +44,8 @@
                 context: {},
                 steps: [],
                 myColor: -1,
+                title: "Click ready to start",
+                started: false,
             }
         },
         methods: {
@@ -120,15 +121,18 @@
                 }
             },
             onRetract() {
-                let lastIndex = this.steps.length - 1
-                let step = this.steps[lastIndex]
-                this.removeChess(step.i, step.j)
-                this.steps.splice(lastIndex, 1)
+                // let lastIndex = this.steps.length - 1
+                // let step = this.steps[lastIndex]
+                // this.removeChess(step.i, step.j)
+                // this.steps.splice(lastIndex, 1)
             },
             onExit() {
                 this.$store.dispatch('removeTab', this.roomId)
                 leaveRoom(this.roomId)
                 setPlayerStatus("leisure")
+            },
+            onSurrender() {
+                surrender(this.roomId)
             },
             onDraw() {
                 console.log(this.steps)
@@ -162,6 +166,9 @@
             matchDetails(details) {
                 if (details.roomId === this.roomId) {
                     if (details.host.ready && details.challenger.ready) {
+                        this.started = true
+                        this.steps = []
+                        this.context.clearRect(0, 0, side, side)
                         let id = this.$store.getters.player.id
                         if (details.host.id === id) {
                             this.myColor = details.host.color
@@ -182,7 +189,16 @@
             },
             gameOverDTO(gameOverDTO) {
                 if (gameOverDTO.rid === this.roomId) {
-                    this.$message.info(gameOverDTO.winner.name + ' win')
+                    this.started = false
+                    if (gameOverDTO.cause === 'five') {
+                        this.title = 'Five in a row! Winner: ' + gameOverDTO.winner.name
+                    }
+                    else if (gameOverDTO.cause === 'escape') {
+                        this.title = gameOverDTO.loser.name + ' escapes. Winner: ' + gameOverDTO.winner.name
+                    }
+                    else if (gameOverDTO.cause === 'surrender') {
+                        this.title = gameOverDTO.loser.name + ' gives up. Winner: ' + gameOverDTO.winner.name
+                    }
                     this.myColor = -1
                 }
             }

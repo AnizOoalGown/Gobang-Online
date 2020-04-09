@@ -72,3 +72,7 @@ export function makeStep(rid, i, j) {
         j
     })
 }
+
+export function surrender(rid) {
+    send(code.Surrender, rid)
+}

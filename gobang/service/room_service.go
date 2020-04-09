@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	uuid "github.com/satori/go.uuid"
+	"gobang/dto"
 	"gobang/entity"
 	"gobang/redis"
 	"log"
@@ -122,31 +123,50 @@ func CreateRoom(pid string, color int8) (*entity.Room, error) {
 	return r, nil
 }
 
-func LeaveRoom(pid string, rid string) (*entity.Room, error) {
+func LeaveRoom(pid string, rid string) (*entity.Room, *dto.GameOverDTO, error) {
 	r, err := redis.GetRoom(rid)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, nil, err
 	}
 
 	inRoom, role, i := isInRoom(pid, r)
 	if !inRoom {
-		return r, nil
+		return r, nil, nil
 	}
 
+	var gameOverDTO *dto.GameOverDTO
 	if role == "host" {
 		if r.Challenger.Id == "" {
 			if err = redis.DelRoom(rid); err != nil {
 				log.Println(err)
-				return nil, err
+				return nil, nil, err
 			}
 			r.Host = entity.PlayerDetails{}
-			return r, nil
+			return r, nil, nil
 		} else {
+			if r.Started {
+				r.Started = false
+				gameOverDTO = &dto.GameOverDTO{
+					RId:    r.Id,
+					Winner: r.Challenger,
+					Loser:  r.Host,
+					Cause:  "escape",
+				}
+			}
 			r.Host = r.Challenger
 		}
 		r.Challenger = entity.PlayerDetails{}
 	} else if role == "challenger" {
+		if r.Started {
+			r.Started = false
+			gameOverDTO = &dto.GameOverDTO{
+				RId:    r.Id,
+				Winner: r.Host,
+				Loser:  r.Challenger,
+				Cause:  "escape",
+			}
+		}
 		r.Challenger = entity.PlayerDetails{}
 	} else if role == "spectator" {
 		r.Spectators = append(r.Spectators[:i], r.Spectators[i+1:]...)
@@ -154,10 +174,10 @@ func LeaveRoom(pid string, rid string) (*entity.Room, error) {
 
 	if err = redis.SetRoom(r); err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, nil, err
 	}
 
-	return r, nil
+	return r, gameOverDTO, nil
 }
 
 func RoomChat(rid string, msg *entity.DialogMsg) (*entity.Room, error) {

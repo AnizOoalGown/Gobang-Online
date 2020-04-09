@@ -57,7 +57,19 @@ func Disconnect(s *melody.Session) {
 	}
 	id := idObject.(string)
 	idSessionMap.Delete(id)
-	service.PlayerDisconnect(id)
+	rooms, err := service.PlayerDisconnect(id)
+	if err != nil {
+		SendErr(s, err)
+	}
+	for _, room := range *rooms {
+		r, gameOverDTO, err := service.LeaveRoom(id, room.Id)
+		if err != nil {
+			SendErr(s, err)
+		}
+		if gameOverDTO != nil {
+			SendGameOver(r, gameOverDTO)
+		}
+	}
 }
 
 func Send(s *melody.Session, msg *dto.Message) {
@@ -104,6 +116,15 @@ func Send2Room(r *entity.Room, msg *dto.Message) {
 	}
 }
 
+func SendGameOver(room *entity.Room, gameOverDTO *dto.GameOverDTO) {
+	msg := &dto.Message{
+		Code: constants.GameOver,
+		Data: *gameOverDTO,
+	}
+
+	Send2Room(room, msg)
+}
+
 func Receive(s *melody.Session, msgByte []byte) {
 	msg := &dto.Message{}
 	if err := json.Unmarshal(msgByte, msg); err != nil {
@@ -137,6 +158,12 @@ func Receive(s *melody.Session, msgByte []byte) {
 		SetReady(s, msg)
 	case constants.MakeStep:
 		MakeStep(s, msg)
+	case constants.RetractStep:
+		RetractStep(s, msg)
+	case constants.Surrender:
+		Surrender(s, msg)
+	case constants.AskDraw:
+		AskDraw(s, msg)
 	}
 }
 
