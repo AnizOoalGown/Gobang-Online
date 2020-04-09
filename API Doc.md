@@ -311,15 +311,43 @@ Request from a player
 
 ## Retract Step
 
+## Surrender
+
+Request from a player. Data is rid
+
+```json
+{
+    "code": 17,
+    "data": ""
+}
+```
+
+
+
 ## Ask Draw
+
+Request from a player
+
+```json
+{
+    "code": 18,
+    "data": {
+        "rid": 
+    }
+}
+```
+
+
 
 ## Game Over
 
 Send to the players in the room
 
+cause: five, surrender, draw, escape
+
 ```json
 {
-    "code": "18",
+    "code": "19",
     "data": {
         "rid": "",
         "winner": {
@@ -338,6 +366,7 @@ Send to the players in the room
             "color":0,
             "ready":false
         },
+        "cause": ""
     }
 }
 ```
