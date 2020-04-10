@@ -79,6 +79,12 @@ export default {
     },
     gameOver(gameOverDTO) {
         store.dispatch('setGameOverDTO', gameOverDTO)
+    },
+    askDraw(drawDTO) {
+        store.dispatch('setDrawDTO', drawDTO)
+    },
+    retractStep(retractDTO) {
+        store.dispatch('setRetractDTO', retractDTO)
     }
 }
 

@@ -76,3 +76,17 @@ export function makeStep(rid, i, j) {
 export function surrender(rid) {
     send(code.Surrender, rid)
 }
+
+export function askDraw(rid, consent) {
+    send(code.AskDraw, {
+        rid,
+        consent
+    })
+}
+
+export function retractStep(rid, consent) {
+    send(code.RetractStep, {
+        rid,
+        consent
+    })
+}

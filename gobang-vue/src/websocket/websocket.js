@@ -56,6 +56,12 @@ function onMessage(e) {
         case code.GameOver:
             receive.gameOver(data)
             break
+        case code.AskDraw:
+            receive.askDraw(data)
+            break
+        case code.RetractStep:
+            receive.retractStep(data)
+            break
         default:
             break
     }

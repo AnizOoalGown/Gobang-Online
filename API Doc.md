@@ -311,6 +311,44 @@ Request from a player
 
 ## Retract Step
 
+Request from a player, send to another
+
+```json
+{
+    "code": 16,
+    "data": {
+        "rid": "",
+        "consent": 1
+    }
+}
+```
+
+Response from a player if agree, sent to another
+
+```json
+{
+    "code": 16,
+    "data": {
+        "rid": "",
+        "consent": 2
+    }
+}
+```
+
+Response from a player if not agree, sent to another
+
+```json
+{
+    "code": 16,
+    "data": {
+        "rid": "",
+        "consent": 0
+    }
+}
+```
+
+
+
 ## Surrender
 
 Request from a player. Data is rid
@@ -326,13 +364,38 @@ Request from a player. Data is rid
 
 ## Ask Draw
 
-Request from a player
+Request from a player, send to another
 
 ```json
 {
     "code": 18,
     "data": {
-        "rid": 
+        "rid": "",
+        "consent": 1
+    }
+}
+```
+
+Response from a player if agree, sent to another
+
+```json
+{
+    "code": 18,
+    "data": {
+        "rid": "",
+        "consent": 2
+    }
+}
+```
+
+Response from a player if not agree, sent to another
+
+```json
+{
+    "code": 18,
+    "data": {
+        "rid": "",
+        "consent": 0
     }
 }
 ```

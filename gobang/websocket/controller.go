@@ -276,7 +276,19 @@ func CheckFive(room *entity.Room) {
 }
 
 func RetractStep(s *melody.Session, msg *dto.Message) {
-
+	pid, _ := GetPId(s)
+	data := msg.Data.(map[string]interface{})
+	rid := data["rid"].(string)
+	consent := int(data["consent"].(float64))
+	opponentId, room, err := service.RetractStep(pid, rid, consent)
+	if err != nil {
+		SendErr(s, err)
+	}
+	if consent == 2 {
+		Send2Room(room, msg)
+	} else {
+		Send2PId(opponentId, msg)
+	}
 }
 
 func Surrender(s *melody.Session, msg *dto.Message) {
@@ -303,5 +315,25 @@ func Surrender(s *melody.Session, msg *dto.Message) {
 }
 
 func AskDraw(s *melody.Session, msg *dto.Message) {
+	pid, _ := GetPId(s)
+	data := msg.Data.(map[string]interface{})
+	rid := data["rid"].(string)
+	consent := int(data["consent"].(float64))
+	opponentId, room, err := service.Draw(pid, rid, consent)
+	if err != nil {
+		SendErr(s, err)
+	}
 
+	if consent == 2 {
+		SendGameOver(room, &dto.GameOverDTO{
+			RId:   rid,
+			Cause: "draw",
+		})
+		Send2Room(room, &dto.Message{
+			Code: constants.SetReady,
+			Data: *room,
+		})
+	} else {
+		Send2PId(opponentId, msg)
+	}
 }

@@ -36,6 +36,8 @@ const store = new Vuex.Store({
         },
         roomChatDTO: {},
         gameOverDTO: {},
+        drawDTO: {},
+        retractDTO: {},
         hallDialogMsg: {
             "time": "2020-03-31 16:43:00",
             "from": "sys",
@@ -59,6 +61,8 @@ const store = new Vuex.Store({
         matchDetails: state => state.matchDetails,
         roomChatDTO: state => state.roomChatDTO,
         gameOverDTO: state => state.gameOverDTO,
+        drawDTO: state => state.drawDTO,
+        retractDTO: state => state.retractDTO,
         hallDialogMsg: state => state.hallDialogMsg,
         rooms: state => state.rooms
     },
@@ -116,6 +120,12 @@ const store = new Vuex.Store({
         setGameOverDTO(state, gameOverDTO) {
             state.gameOverDTO = gameOverDTO
         },
+        setDrawDTO(state, drawDTO) {
+            state.drawDTO = drawDTO
+        },
+        setRetractDTO(state, retractDTO) {
+            state.retractDTO = retractDTO
+        },
         setHallDialogMsg(state, dialogMsg) {
             state.hallDialogMsg = dialogMsg
         },
@@ -168,6 +178,12 @@ const store = new Vuex.Store({
         },
         setGameOverDTO({commit}, gameOverDTO) {
             commit('setGameOverDTO', gameOverDTO)
+        },
+        setDrawDTO({commit}, drawDTO) {
+            commit('setDrawDTO', drawDTO)
+        },
+        setRetractDTO({commit}, retractDTO) {
+            commit('setRetractDTO', retractDTO)
         },
         setHallDialogMsg({commit}, dialogMsg) {
             commit('setHallDialogMsg', dialogMsg)

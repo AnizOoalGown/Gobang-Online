@@ -8,16 +8,16 @@
             <canvas :id="roomId" @click="onClick">Your browser doesn't support canvas</canvas>
         </el-main>
         <el-footer align="center" style="height: 20px">
-            <el-button size="mini" @click="onRetract()" :disabled="myColor===-1">retract</el-button>
-            <el-button size="mini" @click="onSurrender()" :disabled="myColor===-1">surrender</el-button>
-            <el-button size="mini" @click="onDraw()" :disabled="myColor===-1">draw</el-button>
+            <el-button size="mini" @click="onRetract()" :disabled="buttonDisabled">retract</el-button>
+            <el-button size="mini" @click="onSurrender()" :disabled="buttonDisabled">surrender</el-button>
+            <el-button size="mini" @click="onDraw()" :disabled="buttonDisabled">draw</el-button>
         </el-footer>
     </el-container>
 </template>
 
 <script>
     import constant from "../constants/color";
-    import {leaveRoom, makeStep, surrender} from "../websocket/send-api";
+    import {askDraw, leaveRoom, makeStep, retractStep, surrender} from "../websocket/send-api";
     import {setPlayerStatus} from "../websocket/send-api";
 
     // let canvas;
@@ -46,6 +46,7 @@
                 myColor: -1,
                 title: "Click ready to start",
                 started: false,
+                waitResponse: false
             }
         },
         methods: {
@@ -130,7 +131,7 @@
                 }
             },
             onClick(e) {
-                if (!this.myTurn) {
+                if (this.chessboardDisabled) {
                     return
                 }
                 let x = e.offsetX
@@ -143,11 +144,9 @@
                 }
             },
             onRetract() {
-                this.$message.info('The function of retracting step is not developed')
-                // let lastIndex = this.steps.length - 1
-                // let step = this.steps[lastIndex]
-                // this.removeChess(step.i, step.j)
-                // this.steps.splice(lastIndex, 1)
+                this.waitResponse = true
+                this.$message.info('Retract request sent')
+                retractStep(this.roomId, 1)
             },
             onExit() {
                 this.$store.dispatch('removeTab', this.roomId)
@@ -158,7 +157,9 @@
                 surrender(this.roomId)
             },
             onDraw() {
-                console.log(this.steps)
+                this.waitResponse = true
+                this.$message.info('Draw request sent')
+                askDraw(this.roomId, 1)
             }
         },
         mounted() {
@@ -175,8 +176,11 @@
             turn() {
                 return this.steps.length % 2
             },
-            myTurn() {
-                return this.turn === this.myColor
+            chessboardDisabled() {
+                return this.myColor !== this.turn || this.waitResponse
+            },
+            buttonDisabled() {
+                return this.myColor === -1 || this.waitResponse
             },
             step() {
                 return this.$store.getters.step
@@ -186,6 +190,12 @@
             },
             chessboard() {
                 return this.$store.getters.chessboard
+            },
+            drawDTO() {
+                return this.$store.getters.drawDTO
+            },
+            retractDTO() {
+                return this.$store.getters.retractDTO
             }
         },
         watch: {
@@ -225,6 +235,14 @@
                     else if (gameOverDTO.cause === 'surrender') {
                         this.title = gameOverDTO.loser.name + ' gives up. Winner: ' + gameOverDTO.winner.name
                     }
+                    else if (gameOverDTO.cause === 'draw') {
+                        this.waitResponse = false
+                        this.title = 'Draw!'
+                    }
+                    else {
+                        this.title = ''
+                    }
+                    this.$alert(this.title)
                     this.myColor = -1
                 }
             },
@@ -235,9 +253,54 @@
                         this.drawChess(step.i, step.j, index % 2)
                     })
                 }
+            },
+            drawDTO(drawDTO) {
+                if (drawDTO.rid === this.roomId) {
+                    if (drawDTO.consent === 1) {
+                        this.$confirm('Your opponent asks for a draw. Do you agree?', 'Ask Draw', {
+                            confirmButtonText: 'yes',
+                            cancelButtonText: 'no',
+                            type: 'info'
+                        }).then(() => {
+                            askDraw(this.roomId, 2)
+                        }).catch(() => {
+                            askDraw(this.roomId, 0)
+                        })
+                    }
+                    else if (drawDTO.consent === 0) {
+                        this.waitResponse = false
+                        this.$alert("Your opponent doesn't agree for a draw.", 'Reject Draw')
+                    }
+                }
+            },
+            retractDTO(retractDTO) {
+                if (retractDTO.rid === this.roomId) {
+                    if (retractDTO.consent === 1) {
+                        this.$confirm('Your opponent asks for a retract. Do you agree?', 'Ask Retract', {
+                            confirmButtonText: 'yes',
+                            cancelButtonText: 'no',
+                            type: 'info'
+                        }).then(() => {
+                            retractStep(this.roomId, 2)
+                        }).catch(() => {
+                            retractStep(this.roomId, 0)
+                        })
+                    }
+                }
+                else if (retractDTO.consent === 0) {
+                    this.waitResponse = false
+                    this.$alert("Your opponent doesn't agree for a retract.", 'Reject Retract')
+                }
+                else if (retractDTO.consent === 2) {
+                    this.waitResponse = false
+                    this.$message.info('Retract step agree')
+                    let lastIndex = this.steps.length - 1
+                    let step = this.steps[lastIndex]
+                    this.removeChess(step.i, step.j)
+                    this.steps.splice(lastIndex, 1)
+                }
             }
         }
-
     }
 </script>
 
@@ -247,6 +310,7 @@
         margin: 0px auto;
         box-shadow: -2px -2px 2px #EFEFEF, 5px 5px 5px #B9B9B9;
         cursor: pointer;
+        pointer-events: auto;
         background-image: url("../assets/images/chessboard.jpg");
         background-size: 100% 100%;
     }
