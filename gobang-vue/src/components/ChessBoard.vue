@@ -93,7 +93,7 @@
                     context.fill()
                 }
             },
-            labelStep(i, j, color) {
+            drawLabel(i, j, color) {
                 let context = this.context
                 context.beginPath()
                 context.arc(m +i * d, m + j * d, r / 3, 0, 2 * Math.PI)
@@ -109,6 +109,15 @@
                 }
                 context.fill()
             },
+            labelLastStep() {
+                let lastStep = this.steps[this.steps.length - 1]
+                this.drawLabel(lastStep.i, lastStep.j, -1)
+                if (this.steps.length > 1) {
+                    let index = this.steps.length - 2
+                    let c = this.steps[index]
+                    this.drawLabel(c.i, c.j, index % 2)
+                }
+            },
             removeChess(i, j) {
                 this.context.clearRect((i) * d, (j) * d, d, d);
             },
@@ -123,12 +132,7 @@
             chess(i, j) {
                 this.steps.push({i, j})
                 this.drawChess(i, j, 1 - this.turn)
-                this.labelStep(i, j, -1)
-                if (this.steps.length > 1) {
-                    let index = this.steps.length - 2
-                    let c = this.steps[index]
-                    this.labelStep(c.i, c.j, index % 2)
-                }
+                this.labelLastStep()
             },
             onClick(e) {
                 if (this.chessboardDisabled) {
@@ -252,6 +256,7 @@
                     this.steps.forEach((step, index) => {
                         this.drawChess(step.i, step.j, index % 2)
                     })
+                    this.labelLastStep()
                 }
             },
             drawDTO(drawDTO) {
@@ -286,19 +291,23 @@
                             retractStep(this.roomId, 0)
                         })
                     }
+                    else if (retractDTO.consent === 0) {
+                        this.waitResponse = false
+                        this.$alert("Your opponent doesn't agree for a retract.", 'Reject Retract')
+                    }
+                    else if (retractDTO.consent === 2) {
+                        this.$message.info('Retract step agree')
+                        for (let i = 0; i < retractDTO.count; i++) {
+                            let lastIndex = this.steps.length - 1
+                            let step = this.steps[lastIndex]
+                            this.removeChess(step.i, step.j)
+                            this.steps.splice(lastIndex, 1)
+                        }
+                        this.labelLastStep()
+                        this.waitResponse = false
+                    }
                 }
-                else if (retractDTO.consent === 0) {
-                    this.waitResponse = false
-                    this.$alert("Your opponent doesn't agree for a retract.", 'Reject Retract')
-                }
-                else if (retractDTO.consent === 2) {
-                    this.waitResponse = false
-                    this.$message.info('Retract step agree')
-                    let lastIndex = this.steps.length - 1
-                    let step = this.steps[lastIndex]
-                    this.removeChess(step.i, step.j)
-                    this.steps.splice(lastIndex, 1)
-                }
+
             }
         }
     }

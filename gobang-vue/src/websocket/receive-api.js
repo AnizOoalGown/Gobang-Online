@@ -38,16 +38,22 @@ export default {
         })
     },
     leaveRoom(room) {
-        store.dispatch('setPlayerTable', {
-            roomId: room.id,
-            players: room.spectators
+        store.dispatch('addTab', room).then(() => {
+            store.dispatch('setPlayerTable', {
+                roomId: room.id,
+                players: room.spectators
+            })
+            store.dispatch('setMatchDetails', {
+                roomId: room.id,
+                host: room.host,
+                challenger: room.challenger
+            })
+
+            store.dispatch('setChessboard', {
+                roomId: room.id,
+                steps: room.steps
+            })
         })
-        store.dispatch('setMatchDetails', {
-            roomId: room.id,
-            host: room.host,
-            challenger: room.challenger
-        })
-        store.dispatch('addTab', room)
     },
     delRoom(roomId) {
         store.dispatch('removeTab', roomId)

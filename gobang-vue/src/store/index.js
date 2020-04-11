@@ -75,7 +75,7 @@ const store = new Vuex.Store({
             }
             for (let i in state.tabs) {
                 if (state.tabs[i].roomId === room.id) {
-                    state.tabs[i] = newTab
+                    state.tabs[i].title = newTab.title
                     return
                 }
             }

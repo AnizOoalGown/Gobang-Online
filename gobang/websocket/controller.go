@@ -280,11 +280,13 @@ func RetractStep(s *melody.Session, msg *dto.Message) {
 	data := msg.Data.(map[string]interface{})
 	rid := data["rid"].(string)
 	consent := int(data["consent"].(float64))
-	opponentId, room, err := service.RetractStep(pid, rid, consent)
+	opponentId, room, count, err := service.RetractStep(pid, rid, consent)
 	if err != nil {
 		SendErr(s, err)
 	}
 	if consent == 2 {
+		data["count"] = count
+		msg.Data = data
 		Send2Room(room, msg)
 	} else {
 		Send2PId(opponentId, msg)

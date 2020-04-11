@@ -103,55 +103,57 @@ func CheckFive(room *entity.Room) (bool, *dto.GameOverDTO) {
 	return true, gameOverDTO
 }
 
-func RetractStep(pid string, rid string, consent int) (string, *entity.Room, error) {
+func RetractStep(pid string, rid string, consent int) (string, *entity.Room, int, error) {
 	room, err := redis.GetRoom(rid)
 	if err != nil {
 		log.Println(err)
-		return "", nil, err
+		return "", nil, 0, err
 	}
 	length := len(room.Steps)
 	if !room.Started || length == 0 {
 		err = fmt.Errorf("error: room %v is not started or there is no step", rid)
 		log.Println(err)
-		return "", nil, err
+		return "", nil, 0, err
 	}
 
 	inRoom, role, _ := isInRoom(pid, room)
 	if !inRoom || role == "spectator" {
 		err = fmt.Errorf("error: player %v is not playing in room %v", pid, rid)
 		log.Println(err)
-		return "", nil, err
+		return "", nil, 0, err
 	}
 
 	var opponentId string
 	var color int8
 	if role == "host" {
 		opponentId = room.Challenger.Id
-		color = room.Host.Color
+		color = room.Challenger.Color
 	} else if role == "challenger" {
 		opponentId = room.Host.Id
-		color = room.Challenger.Color
+		color = room.Host.Color
 	}
 
-	if length == 1 && color == constants.WHITE {
-		err = fmt.Errorf("error: there is no white step so white side can't retract")
-		log.Println(err)
-		return "", nil, err
-	}
-
+	var count int
 	if consent == 2 {
+		if length == 1 && color == constants.WHITE {
+			err = fmt.Errorf("error: there is no white step so white side can't retract")
+			log.Println(err)
+			return "", nil, 0, err
+		}
 		lastColor := int8((length - 1) % 2)
 		if lastColor == color {
+			count = 1
 			room.Steps = room.Steps[:length-1]
 		} else {
+			count = 2
 			room.Steps = room.Steps[:length-2]
 		}
 	}
 
 	if err = redis.SetRoom(room); err != nil {
-		return "", nil, err
+		return "", nil, 0, err
 	}
-	return opponentId, room, err
+	return opponentId, room, count, err
 }
 
 func Surrender(pid string, rid string) (*dto.GameOverDTO, *entity.Room, error) {
