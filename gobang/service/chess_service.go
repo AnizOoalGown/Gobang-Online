@@ -46,40 +46,44 @@ func SetReady(rid string, pid string, ready bool) (*entity.Room, error) {
 	return room, nil
 }
 
-func MakeStep(rid string, c entity.Chess) (*entity.Room, error) {
+func MakeStep(rid string, c entity.Chess) (bool, *dto.GameOverDTO, *entity.Room, error) {
 	room, err := redis.GetRoom(rid)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return false, nil, nil, err
 	}
 	if room.Started {
 		room.Steps = append(room.Steps, c)
 	} else {
 		err = fmt.Errorf("error: Can not make step while game is not started")
 		log.Println(err)
-		return nil, err
+		return false, nil, nil, err
 	}
 
+	over, gameOverDTO, err := CheckFive(room)
+	if err != nil {
+		log.Println(err)
+		return false, nil, nil, err
+	}
 	if err = redis.SetRoom(room); err != nil {
 		log.Println(err)
-		return nil, err
+		return false, nil, nil, err
 	}
-	return room, nil
+	return over, gameOverDTO, room, nil
 }
 
-func PrepareNewGame(room *entity.Room) error {
+func PrepareNewGame(room *entity.Room) {
 	room.Host.Ready = false
 	room.Challenger.Ready = false
 	room.Host.Color = 1 - room.Host.Color
 	room.Challenger.Color = 1 - room.Challenger.Color
 	room.Started = false
-	return redis.SetRoom(room)
 }
 
-func CheckFive(room *entity.Room) (bool, *dto.GameOverDTO) {
+func CheckFive(room *entity.Room) (bool, *dto.GameOverDTO, error) {
 	hasFive, color := util.CheckFiveOfLastStep(&room.Steps)
 	if !hasFive {
-		return false, nil
+		return false, nil, nil
 	}
 
 	var gameOverDTO *dto.GameOverDTO
@@ -100,7 +104,7 @@ func CheckFive(room *entity.Room) (bool, *dto.GameOverDTO) {
 	}
 
 	PrepareNewGame(room)
-	return true, gameOverDTO
+	return true, gameOverDTO, nil
 }
 
 func RetractStep(pid string, rid string, consent int) (string, *entity.Room, int, error) {
@@ -189,7 +193,8 @@ func Surrender(pid string, rid string) (*dto.GameOverDTO, *entity.Room, error) {
 		gameOverDTO.Loser = room.Challenger
 	}
 
-	if err = PrepareNewGame(room); err != nil {
+	PrepareNewGame(room)
+	if err = redis.SetRoom(room); err != nil {
 		log.Println(err)
 		return nil, nil, err
 	}
@@ -217,7 +222,8 @@ func Draw(pid string, rid string, consent int) (string, *entity.Room, error) {
 	}
 
 	if consent == 2 {
-		if err = PrepareNewGame(room); err != nil {
+		PrepareNewGame(room)
+		if err = redis.SetRoom(room); err != nil {
 			log.Println(err)
 			return "", nil, err
 		}

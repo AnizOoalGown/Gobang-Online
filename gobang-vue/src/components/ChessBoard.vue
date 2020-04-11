@@ -110,12 +110,15 @@
                 context.fill()
             },
             labelLastStep() {
-                let lastStep = this.steps[this.steps.length - 1]
-                this.drawLabel(lastStep.i, lastStep.j, -1)
-                if (this.steps.length > 1) {
-                    let index = this.steps.length - 2
-                    let c = this.steps[index]
-                    this.drawLabel(c.i, c.j, index % 2)
+                let length = this.steps.length
+                if (length > 0) {
+                    let lastStep = this.steps[length - 1]
+                    this.drawLabel(lastStep.i, lastStep.j, -1)
+                    if (length > 1) {
+                        let index = length - 2
+                        let c = this.steps[index]
+                        this.drawLabel(c.i, c.j, index % 2)
+                    }
                 }
             },
             removeChess(i, j) {

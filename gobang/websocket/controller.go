@@ -255,17 +255,12 @@ func MakeStep(s *melody.Session, msg *dto.Message) {
 		I: int8(i),
 		J: int8(j),
 	}
-	room, err := service.MakeStep(rid, c)
+	over, gameOverDTO, room, err := service.MakeStep(rid, c)
 	if err != nil {
 		SendErr(s, err)
 		return
 	}
 	Send2Room(room, msg)
-	CheckFive(room)
-}
-
-func CheckFive(room *entity.Room) {
-	over, gameOverDTO := service.CheckFive(room)
 	if over {
 		SendGameOver(room, gameOverDTO)
 		Send2Room(room, &dto.Message{

@@ -330,7 +330,8 @@ Response from a player if agree, sent to another
     "code": 16,
     "data": {
         "rid": "",
-        "consent": 2
+        "consent": 2,
+        "count": 2
     }
 }
 ```
