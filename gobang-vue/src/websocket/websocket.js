@@ -1,7 +1,7 @@
 import code from "../constants/msg-code"
 import receive from "./receive-api"
 
-const url = 'ws://localhost:8080/ws'
+const url = `ws://${location.host}/ws`
 let ws = {}
 
 export function initWebSocket() {

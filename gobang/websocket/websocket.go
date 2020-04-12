@@ -16,6 +16,7 @@ import (
 var (
 	idSessionMap sync.Map
 	m            *melody.Melody
+	lock         sync.Mutex
 )
 
 func InitMelody() *melody.Melody {
@@ -56,6 +57,10 @@ func Disconnect(s *melody.Session) {
 		return
 	}
 	id := idObject.(string)
+
+	lock.Lock()
+	defer lock.Unlock()
+
 	idSessionMap.Delete(id)
 	rooms, err := service.PlayerDisconnect(id)
 	if err != nil {

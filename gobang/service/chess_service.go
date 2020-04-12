@@ -5,12 +5,16 @@ import (
 	"gobang/constants"
 	"gobang/dto"
 	"gobang/entity"
+	"gobang/lock"
 	"gobang/redis"
 	"gobang/util"
 	"log"
 )
 
 func SetReady(rid string, pid string, ready bool) (*entity.Room, error) {
+	lock.RoomLock.Lock(rid)
+	defer lock.RoomLock.Unlock(rid)
+
 	room, err := redis.GetRoom(rid)
 	if err != nil {
 		log.Println(err)
@@ -47,6 +51,9 @@ func SetReady(rid string, pid string, ready bool) (*entity.Room, error) {
 }
 
 func MakeStep(rid string, c entity.Chess) (bool, *dto.GameOverDTO, *entity.Room, error) {
+	lock.RoomLock.Lock(rid)
+	defer lock.RoomLock.Unlock(rid)
+
 	room, err := redis.GetRoom(rid)
 	if err != nil {
 		log.Println(err)
@@ -108,6 +115,9 @@ func CheckFive(room *entity.Room) (bool, *dto.GameOverDTO, error) {
 }
 
 func RetractStep(pid string, rid string, consent int) (string, *entity.Room, int, error) {
+	lock.RoomLock.Lock(rid)
+	defer lock.RoomLock.Unlock(rid)
+
 	room, err := redis.GetRoom(rid)
 	if err != nil {
 		log.Println(err)
@@ -161,6 +171,9 @@ func RetractStep(pid string, rid string, consent int) (string, *entity.Room, int
 }
 
 func Surrender(pid string, rid string) (*dto.GameOverDTO, *entity.Room, error) {
+	lock.RoomLock.Lock(rid)
+	defer lock.RoomLock.Unlock(rid)
+
 	room, err := redis.GetRoom(rid)
 	if err != nil {
 		log.Println(err)
@@ -203,6 +216,9 @@ func Surrender(pid string, rid string) (*dto.GameOverDTO, *entity.Room, error) {
 }
 
 func Draw(pid string, rid string, consent int) (string, *entity.Room, error) {
+	lock.RoomLock.Lock(rid)
+	defer lock.RoomLock.Unlock(rid)
+
 	room, err := redis.GetRoom(rid)
 	if err != nil {
 		log.Println(err)

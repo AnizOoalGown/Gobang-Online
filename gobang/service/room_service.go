@@ -5,11 +5,14 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"gobang/dto"
 	"gobang/entity"
+	"gobang/lock"
 	"gobang/redis"
 	"log"
 )
 
 func GetRooms() (*[]entity.Room, error) {
+	lock.RoomLock.RLockAll()
+	defer lock.RoomLock.RUnlockAll()
 	return redis.GetRooms()
 }
 
@@ -41,6 +44,9 @@ func EnterRoom(pid string, rid string, role string) (*entity.Room, error) {
 		log.Println(err)
 		return nil, err
 	}
+
+	lock.RoomLock.Lock(rid)
+	defer lock.RoomLock.Unlock(rid)
 
 	r, err := redis.GetRoom(rid)
 	if err != nil {
@@ -105,8 +111,13 @@ func CreateRoom(pid string, color int8) (*entity.Room, error) {
 		Ready:  false,
 	}
 
+	id := uuid.NewV4().String()
+	lock.RoomLock.Add(id)
+	lock.RoomLock.Lock(id)
+	defer lock.RoomLock.Unlock(id)
+
 	r := &entity.Room{
-		Id:      uuid.NewV4().String(),
+		Id:      id,
 		Dialog:  make([]entity.DialogMsg, 0),
 		Steps:   make([]entity.Chess, 0),
 		Started: false,
@@ -124,14 +135,18 @@ func CreateRoom(pid string, color int8) (*entity.Room, error) {
 }
 
 func LeaveRoom(pid string, rid string) (*entity.Room, *dto.GameOverDTO, error) {
+	lock.RoomLock.Lock(rid)
+
 	r, err := redis.GetRoom(rid)
 	if err != nil {
 		log.Println(err)
+		lock.RoomLock.Unlock(rid)
 		return nil, nil, err
 	}
 
 	inRoom, role, i := isInRoom(pid, r)
 	if !inRoom {
+		lock.RoomLock.Unlock(rid)
 		return r, nil, nil
 	}
 
@@ -140,9 +155,12 @@ func LeaveRoom(pid string, rid string) (*entity.Room, *dto.GameOverDTO, error) {
 		if r.Challenger.Id == "" {
 			if err = redis.DelRoom(rid); err != nil {
 				log.Println(err)
+				lock.RoomLock.Unlock(rid)
+				lock.RoomLock.Delete(rid)
 				return nil, nil, err
 			}
 			r.Host = entity.PlayerDetails{}
+			lock.RoomLock.Unlock(rid)
 			return r, nil, nil
 		} else {
 			if r.Started {
@@ -174,13 +192,18 @@ func LeaveRoom(pid string, rid string) (*entity.Room, *dto.GameOverDTO, error) {
 
 	if err = redis.SetRoom(r); err != nil {
 		log.Println(err)
+		lock.RoomLock.Unlock(rid)
 		return nil, nil, err
 	}
 
+	lock.RoomLock.Unlock(rid)
 	return r, gameOverDTO, nil
 }
 
 func RoomChat(rid string, msg *entity.DialogMsg) (*entity.Room, error) {
+	lock.RoomLock.Lock(rid)
+	defer lock.RoomLock.Unlock(rid)
+
 	r, err := redis.GetRoom(rid)
 	if err != nil {
 		log.Println(err)
