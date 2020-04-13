@@ -3,7 +3,6 @@ package service
 import (
 	"gobang/entity"
 	"gobang/redis"
-	"log"
 )
 
 func NewPlayerConnect(id string) (*entity.Player, error) {
@@ -14,10 +13,10 @@ func NewPlayerConnect(id string) (*entity.Player, error) {
 	}
 	err := redis.SetPlayer(p)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return nil, err
 	}
-	log.Println(id + " connects")
+	logger.WithField("pid", id).Debug("player connects")
 	return p, nil
 }
 
@@ -32,23 +31,23 @@ func GetPlayers() (*[]entity.Player, error) {
 func PlayerDisconnect(id string) (*[]entity.Room, error) {
 	err := redis.DelPlayer(id)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return nil, err
 	}
-	log.Println(id + " disconnects")
+	logger.WithField("pid", id).Debug("player disconnects")
 	return redis.GetRooms()
 }
 
 func PlayerRename(id string, newName string) error {
 	p, err := redis.GetPlayer(id)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return err
 	}
 	p.Name = newName
 	err = redis.SetPlayer(p)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return err
 	}
 	return nil
@@ -57,13 +56,13 @@ func PlayerRename(id string, newName string) error {
 func SetPlayerStatus(id string, status string) error {
 	p, err := redis.GetPlayer(id)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return err
 	}
 	p.Status = status
 	err = redis.SetPlayer(p)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return err
 	}
 	return nil

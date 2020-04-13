@@ -1,14 +1,14 @@
 <template>
     <div class="container">
         <div class="header">
-            <span class="title">Profile</span>
+            <span class="title">{{$t('lang.profile.profile')}}</span>
         </div>
         <div class="scrollbar">
             <el-avatar :size="50" :src="circleUrl"></el-avatar>
             <el-form :model="player">
-                <el-form-item label="id">{{player.id}}</el-form-item>
-                <el-form-item label="name">{{player.name}}</el-form-item>
-                <el-form-item label="status">{{player.status}}</el-form-item>
+                <el-form-item :label="$t('lang.profile.id')">{{player.id}}</el-form-item>
+                <el-form-item :label="$t('lang.profile.name')">{{player.name}}</el-form-item>
+                <el-form-item :label="$t('lang.profile.status')">{{$t('lang.status.' + player.status)}}</el-form-item>
             </el-form>
         </div>
     </div>

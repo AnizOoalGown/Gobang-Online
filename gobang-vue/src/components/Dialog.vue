@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="header">
-            <span class="title">Dialog</span>
+            <span class="title">{{$t('lang.dialog.dialog')}}</span>
         </div>
         <div class="scrollbar">
             <div class="line" v-for="(item, index) in dialog" :key="index">
@@ -12,7 +12,7 @@
         </div>
         <div>
             <el-input size="mini" v-model="input" class="input"/>
-            <el-button size="mini" @click="onSend" class="send-button">Send</el-button>
+            <el-button size="mini" @click="onSend" class="send-button">{{$t('lang.dialog.send')}}</el-button>
         </div>
     </div>
 </template>

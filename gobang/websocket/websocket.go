@@ -2,14 +2,14 @@ package websocket
 
 import (
 	"encoding/json"
-	"fmt"
 	uuid "github.com/satori/go.uuid"
+	"github.com/sirupsen/logrus"
+	"github.com/weekface/mgorus"
 	"gobang/constants"
 	"gobang/dto"
 	"gobang/entity"
 	"gobang/service"
 	"gopkg.in/olahol/melody.v1"
-	"log"
 	"sync"
 )
 
@@ -17,9 +17,16 @@ var (
 	idSessionMap sync.Map
 	m            *melody.Melody
 	lock         sync.Mutex
+	logger       *logrus.Logger
 )
 
 func InitMelody() *melody.Melody {
+	logger = logrus.New()
+	hooker, err := mgorus.NewHooker("150.158.104.248:27017", "gobang", "log")
+	if err == nil {
+		logger.Hooks.Add(hooker)
+	}
+
 	m = melody.New()
 	m.HandleMessage(Receive)
 	m.HandleConnect(Connect)
@@ -53,7 +60,7 @@ func Connect(s *melody.Session) {
 func Disconnect(s *melody.Session) {
 	idObject, ok := s.Get("id")
 	if !ok {
-		log.Println("session with no 'id' key")
+		logger.Error("session with no 'id' key")
 		return
 	}
 	id := idObject.(string)
@@ -79,7 +86,9 @@ func Disconnect(s *melody.Session) {
 
 func Send(s *melody.Session, msg *dto.Message) {
 	msgByte, _ := json.Marshal(msg)
-	s.Write(msgByte)
+	if err := s.Write(msgByte); err != nil {
+		logger.Error(err)
+	}
 }
 
 func SendSuccess(s *melody.Session) {
@@ -96,14 +105,12 @@ func SendErr(s *melody.Session, err error) {
 func Send2PId(pid string, msg *dto.Message) {
 	sObj, ok := idSessionMap.Load(pid)
 	if !ok {
-		err := fmt.Errorf("error: can not load the value of %v from idSessionMap", pid)
-		log.Println(err)
+		logger.WithField("pid", pid).Error("can not load the value of %v from idSessionMap")
 		return
 	}
 	s, ok := sObj.(*melody.Session)
 	if !ok {
-		err := fmt.Errorf("error: sObj is not type of *melody.Session")
-		log.Println(err)
+		logger.Error("sObj is not type of *melody.Session")
 		return
 	}
 	Send(s, msg)
@@ -174,5 +181,7 @@ func Receive(s *melody.Session, msgByte []byte) {
 
 func Broadcast(msg *dto.Message) {
 	msgByte, _ := json.Marshal(*msg)
-	m.Broadcast(msgByte)
+	if err := m.Broadcast(msgByte); err != nil {
+		logger.Error(err)
+	}
 }

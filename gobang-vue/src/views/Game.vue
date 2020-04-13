@@ -1,6 +1,6 @@
 <template>
     <el-tabs v-model="activeTabKey">
-            <el-tab-pane v-for="item in tabs" :key="item.roomId" :label="item.title" :name="item.roomId">
+            <el-tab-pane v-for="item in tabs" :key="item.roomId" :label="setTitle(item.title)" :name="item.roomId">
                 <Hall v-if="item.type === 'hall'" :roomId="item.roomId"/>
                 <Room v-else-if="item.type === 'room'" :roomId="item.roomId"/>
             </el-tab-pane>
@@ -30,6 +30,13 @@
             }
         },
         methods: {
+            setTitle(title) {
+                if (this.$i18n.locale === 'zh') {
+                    title = title.replace(/Room/g,"房间")
+                    title = title.replace(/Hall/g,"大厅")
+                }
+                return title
+            }
         },
         computed: {
             tabs() {

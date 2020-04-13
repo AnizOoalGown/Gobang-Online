@@ -6,7 +6,11 @@
         <div class="scrollbar">
             <el-table :data="players" :show-header="false" size="mini">
                 <el-table-column prop="name"/>
-                <el-table-column prop="status" align="right"/>
+                <el-table-column align="right">
+                    <template slot-scope="scope">
+                        {{$t('lang.status.' + scope.row.status)}}
+                    </template>
+                </el-table-column>
             </el-table>
         </div>
     </div>
@@ -20,13 +24,20 @@
         props: ['roomId'],
         data() {
             return {
-                title: '',
                 players: []
             }
         },
         computed: {
             playerTable() {
                 return this.$store.getters.playerTable
+            },
+            title() {
+                if (this.roomId === 'hall') {
+                    return this.$t('lang.playerTable.playerList')
+                }
+                else {
+                    return this.$t('lang.playerTable.spectatorList')
+                }
             }
         },
         watch: {
@@ -38,12 +49,6 @@
         },
         mounted() {
             getPlayers()
-            if (this.roomId === 'hall') {
-                this.title = 'Player List'
-            }
-            else {
-                this.title = 'Spectator List'
-            }
         }
     }
 </script>

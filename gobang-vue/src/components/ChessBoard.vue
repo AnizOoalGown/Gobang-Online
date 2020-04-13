@@ -2,15 +2,15 @@
     <el-container>
         <el-header style="height: 20px; display: block; text-align: center">
             <span v-if="!started" style="font-size: large; font-weight: bold">{{title}}</span>
-            <el-button size="mini" style="float: right" @click="onExit()">Exit</el-button>
+            <el-button size="mini" style="float: right" @click="onExit()">{{$t('lang.chessboard.button.exit')}}</el-button>
         </el-header>
         <el-main>
             <canvas :id="roomId" @click="onClick">Your browser doesn't support canvas</canvas>
         </el-main>
         <el-footer align="center" style="height: 20px">
-            <el-button size="mini" @click="onRetract()" :disabled="buttonDisabled">retract</el-button>
-            <el-button size="mini" @click="onSurrender()" :disabled="buttonDisabled">surrender</el-button>
-            <el-button size="mini" @click="onDraw()" :disabled="buttonDisabled">draw</el-button>
+            <el-button size="mini" @click="onRetract()" :disabled="buttonDisabled">{{$t('lang.chessboard.button.retract')}}</el-button>
+            <el-button size="mini" @click="onSurrender()" :disabled="buttonDisabled">{{$t('lang.chessboard.button.surrender')}}</el-button>
+            <el-button size="mini" @click="onDraw()" :disabled="buttonDisabled">{{$t('lang.chessboard.button.draw')}}</el-button>
         </el-footer>
     </el-container>
 </template>
@@ -44,7 +44,7 @@
                 context: {},
                 steps: [],
                 myColor: -1,
-                title: "Click ready to start",
+                title: this.$t('lang.chessboard.message.clickReady'),
                 started: false,
                 waitResponse: false
             }
@@ -152,7 +152,7 @@
             },
             onRetract() {
                 this.waitResponse = true
-                this.$message.info('Retract request sent')
+                this.$message.info(this.$t('lang.chessboard.message.retractSent'))
                 retractStep(this.roomId, 1)
             },
             onExit() {
@@ -165,7 +165,7 @@
             },
             onDraw() {
                 this.waitResponse = true
-                this.$message.info('Draw request sent')
+                this.$message.info(this.$t('lang.chessboard.message.drawSent'))
                 askDraw(this.roomId, 1)
             }
         },
@@ -234,17 +234,17 @@
                 if (gameOverDTO.rid === this.roomId) {
                     this.started = false
                     if (gameOverDTO.cause === 'five') {
-                        this.title = 'Five in a row! Winner: ' + gameOverDTO.winner.name
+                        this.title = this.$t('lang.chessboard.message.over.five') + gameOverDTO.winner.name
                     }
                     else if (gameOverDTO.cause === 'escape') {
-                        this.title = gameOverDTO.loser.name + ' escapes. Winner: ' + gameOverDTO.winner.name
+                        this.title = gameOverDTO.loser.name + this.$t('lang.chessboard.message.over.escape') + gameOverDTO.winner.name
                     }
                     else if (gameOverDTO.cause === 'surrender') {
-                        this.title = gameOverDTO.loser.name + ' gives up. Winner: ' + gameOverDTO.winner.name
+                        this.title = gameOverDTO.loser.name + this.$t('lang.chessboard.message.over.surrender') + gameOverDTO.winner.name
                     }
                     else if (gameOverDTO.cause === 'draw') {
                         this.waitResponse = false
-                        this.title = 'Draw!'
+                        this.title = this.$t('lang.chessboard.message.over.draw')
                     }
                     else {
                         this.title = ''
@@ -265,9 +265,9 @@
             drawDTO(drawDTO) {
                 if (drawDTO.rid === this.roomId) {
                     if (drawDTO.consent === 1) {
-                        this.$confirm('Your opponent asks for a draw. Do you agree?', 'Ask Draw', {
-                            confirmButtonText: 'yes',
-                            cancelButtonText: 'no',
+                        this.$confirm(this.$t('lang.chessboard.message.askDraw.info'), this.$t('lang.chessboard.message.askDraw.title'), {
+                            confirmButtonText: this.$t('lang.pop.yes'),
+                            cancelButtonText: this.$t('lang.pop.no'),
                             type: 'info'
                         }).then(() => {
                             askDraw(this.roomId, 2)
@@ -277,16 +277,16 @@
                     }
                     else if (drawDTO.consent === 0) {
                         this.waitResponse = false
-                        this.$alert("Your opponent doesn't agree for a draw.", 'Reject Draw')
+                        this.$alert(this.$t('lang.chessboard.message.rejectDraw.info'), this.$t('lang.chessboard.message.rejectDraw.title'))
                     }
                 }
             },
             retractDTO(retractDTO) {
                 if (retractDTO.rid === this.roomId) {
                     if (retractDTO.consent === 1) {
-                        this.$confirm('Your opponent asks for a retract. Do you agree?', 'Ask Retract', {
-                            confirmButtonText: 'yes',
-                            cancelButtonText: 'no',
+                        this.$confirm(this.$t('lang.chessboard.message.askRetract.info'), this.$t('lang.chessboard.message.askRetract.title'), {
+                            confirmButtonText: this.$t('lang.pop.yes'),
+                            cancelButtonText: this.$t('lang.pop.no'),
                             type: 'info'
                         }).then(() => {
                             retractStep(this.roomId, 2)
@@ -296,10 +296,10 @@
                     }
                     else if (retractDTO.consent === 0) {
                         this.waitResponse = false
-                        this.$alert("Your opponent doesn't agree for a retract.", 'Reject Retract')
+                        this.$alert(this.$t('lang.chessboard.message.rejectRetract.info'), this.$t('lang.chessboard.message.rejectRetract.title'))
                     }
                     else if (retractDTO.consent === 2) {
-                        this.$message.info('Retract step agree')
+                        this.$message.info(this.$t('lang.chessboard.message.agreeRetract.info'))
                         for (let i = 0; i < retractDTO.count; i++) {
                             let lastIndex = this.steps.length - 1
                             let step = this.steps[lastIndex]

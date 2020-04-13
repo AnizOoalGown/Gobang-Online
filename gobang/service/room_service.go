@@ -7,7 +7,6 @@ import (
 	"gobang/entity"
 	"gobang/lock"
 	"gobang/redis"
-	"log"
 )
 
 func GetRooms() (*[]entity.Room, error) {
@@ -41,7 +40,7 @@ func isInRoom(pid string, room *entity.Room) (inRoom bool, role string, index in
 func EnterRoom(pid string, rid string, role string) (*entity.Room, error) {
 	p, err := redis.GetPlayer(pid)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -50,19 +49,19 @@ func EnterRoom(pid string, rid string, role string) (*entity.Room, error) {
 
 	r, err := redis.GetRoom(rid)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return nil, err
 	}
 
 	if r.Host.Id == "" {
 		err = fmt.Errorf("error: Room %v has no host", rid)
-		log.Println(err)
+		logger.Error(err)
 		return nil, err
 	}
 
 	if inRoom, _, _ := isInRoom(pid, r); inRoom {
 		err = fmt.Errorf("error: %v already in room %v", pid, rid)
-		log.Println(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -77,14 +76,14 @@ func EnterRoom(pid string, rid string, role string) (*entity.Room, error) {
 		if p.Status == "leisure" {
 			p.Status = "spectating"
 			if err := SetPlayerStatus(pid, "spectating"); err != nil {
-				log.Println(err)
+				logger.Error(err)
 				return nil, err
 			}
 		}
 		r.Spectators = append(r.Spectators, *p)
 	} else {
 		err = fmt.Errorf("error: The role /'%v/' can't enter room", role)
-		log.Println(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -100,7 +99,7 @@ func EnterRoom(pid string, rid string, role string) (*entity.Room, error) {
 func CreateRoom(pid string, color int8) (*entity.Room, error) {
 	p, err := redis.GetPlayer(pid)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -139,7 +138,7 @@ func LeaveRoom(pid string, rid string) (*entity.Room, *dto.GameOverDTO, error) {
 
 	r, err := redis.GetRoom(rid)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		lock.RoomLock.Unlock(rid)
 		return nil, nil, err
 	}
@@ -154,7 +153,7 @@ func LeaveRoom(pid string, rid string) (*entity.Room, *dto.GameOverDTO, error) {
 	if role == "host" {
 		if r.Challenger.Id == "" {
 			if err = redis.DelRoom(rid); err != nil {
-				log.Println(err)
+				logger.Error(err)
 				lock.RoomLock.Unlock(rid)
 				lock.RoomLock.Delete(rid)
 				return nil, nil, err
@@ -191,7 +190,7 @@ func LeaveRoom(pid string, rid string) (*entity.Room, *dto.GameOverDTO, error) {
 	}
 
 	if err = redis.SetRoom(r); err != nil {
-		log.Println(err)
+		logger.Error(err)
 		lock.RoomLock.Unlock(rid)
 		return nil, nil, err
 	}
@@ -206,7 +205,7 @@ func RoomChat(rid string, msg *entity.DialogMsg) (*entity.Room, error) {
 
 	r, err := redis.GetRoom(rid)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -216,6 +215,7 @@ func RoomChat(rid string, msg *entity.DialogMsg) (*entity.Room, error) {
 	r.Dialog = append(r.Dialog, *msg)
 
 	if err = redis.SetRoom(r); err != nil {
+		logger.Error(err)
 		return nil, err
 	}
 

@@ -1,23 +1,23 @@
 <template>
     <div class="container">
         <div class="header">
-            <span class="title">Chess Room List</span>
-            <el-button size="mini" @click="onCreateRoom" style="float: right; margin-right: 10px">create room</el-button>
-            <el-button size="mini" @click="onRefresh" style="float: right; margin-right: 10px">refresh</el-button>
+            <span class="title">{{$t('lang.roomTable.chessRoomList')}}</span>
+            <el-button size="mini" @click="onCreateRoom" style="float: right; margin-right: 10px">{{$t('lang.roomTable.createRoom')}}</el-button>
+            <el-button size="mini" @click="onRefresh" style="float: right; margin-right: 10px">{{$t('lang.roomTable.refresh')}}</el-button>
         </div>
 
         <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="25%">
             <el-form>
-                <el-form-item label="Your Color">
+                <el-form-item :label="$t('lang.roomTable.dialog.color')">
                     <el-select v-model="dialog.color">
-                        <el-option label="black" :value="0"></el-option>
-                        <el-option label="white" :value="1"></el-option>
+                        <el-option :label="$t('lang.color.black')" :value="0"></el-option>
+                        <el-option :label="$t('lang.color.white')" :value="1"></el-option>
                     </el-select>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="onDialogConfirm" size="small">confirm</el-button>
-                <el-button @click="dialog.visible = false" size="small">cancel</el-button>
+                <el-button type="primary" @click="onDialogConfirm" size="small">{{$t('lang.pop.confirm')}}</el-button>
+                <el-button @click="dialog.visible = false" size="small">{{$t('lang.pop.cancel')}}</el-button>
             </div>
         </el-dialog>
 
@@ -31,8 +31,8 @@
             </el-table-column>
             <el-table-column align="right">
                 <template slot-scope="scope">
-                    <el-button size="mini" @click="onChallenge(scope.row)" v-if="challengeShow(scope.row)">challenge</el-button>
-                    <el-button size="mini" @click="onSpectate(scope.row)">spectate</el-button>
+                    <el-button size="mini" @click="onChallenge(scope.row)" v-if="challengeShow(scope.row)">{{$t('lang.roomTable.challenge')}}</el-button>
+                    <el-button size="mini" @click="onSpectate(scope.row)">{{$t('lang.roomTable.spectate')}}</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -49,7 +49,7 @@
         data() {
             return {
                 dialog: {
-                    title: 'Create Room',
+                    title: this.$t('lang.roomTable.dialog.title'),
                     visible: false,
                     color: color.black
                 }

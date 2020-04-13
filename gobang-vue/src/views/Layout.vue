@@ -5,10 +5,10 @@
                 <el-menu router mode="horizontal" :default-active="$route.path">
                     <template v-for="item in this.$router.options.routes[2].children">
                         <el-menu-item :index="item.path" :key="item.path">
-                            <span slot="title">{{item.name}}</span>
+                            <span slot="title">{{$t('lang.layout.' + item.name)}}</span>
                         </el-menu-item>
                     </template>
-                    <span class="brand-name">Gobang Online v0.1</span>
+                    <span class="brand-name">{{$t('lang.layout.title')}}</span>
                 </el-menu>
             </el-header>
             <el-main>

@@ -4,10 +4,10 @@
         <el-divider/>
         <el-form class="form">
             <el-form-item>
-                <el-input v-model="input" placeholder="Enter your nickname here"></el-input>
+                <el-input v-model="input" :placeholder="$t('lang.login.placeholder')"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="onLogin">login</el-button>
+                <el-button type="primary" @click="onLogin">{{$t('lang.login.login')}}</el-button>
             </el-form-item>
         </el-form>
     </div>

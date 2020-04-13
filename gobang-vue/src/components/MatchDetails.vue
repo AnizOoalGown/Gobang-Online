@@ -1,33 +1,33 @@
 <template>
     <div class="container">
         <div class="header">
-            <span class="title">Match Details</span>
+            <span class="title">{{$t('lang.matchDetails.matchDetails')}}</span>
         </div>
         <div class="scrollbar">
             <div class="role">
                 {{host.name}}
-                <el-button style="margin-left: 10%" size="medium" v-if="readyBtnShow(host)" @click="onReady">ready</el-button>
-                <span style="margin-left: 10%" v-else-if="host.ready===false">unready</span>
-                <span style="margin-left: 10%" v-else-if="host.ready===true">ready!</span>
+                <el-button style="margin-left: 10%" size="medium" v-if="readyBtnShow(host)" @click="onReady">{{$t('lang.matchDetails.ready')}}</el-button>
+                <span style="margin-left: 10%" v-else-if="host.ready===false">{{$t('lang.matchDetails.unready')}}</span>
+                <span style="margin-left: 10%" v-else-if="host.ready===true">{{$t('lang.matchDetails.already')}}</span>
             </div>
             <el-form>
-                <el-form-item label="color">
+                <el-form-item :label="$t('lang.color.color')">
                     <div :class="getChessClass(host.color)"/>
                 </el-form-item>
-                <el-form-item label="role">host</el-form-item>
+                <el-form-item label="role">{{$t('lang.role.host')}}</el-form-item>
             </el-form>
             <el-divider/>
             <div class="role">
                 {{challenger.name}}
-                <el-button style="margin-left: 10%" size="medium" v-if="readyBtnShow(challenger)" @click="onReady">ready</el-button>
-                <span style="margin-left: 10%" v-else-if="challenger.ready===false">unready</span>
-                <span style="margin-left: 10%" v-else-if="challenger.ready===true">ready!</span>
+                <el-button style="margin-left: 10%" size="medium" v-if="readyBtnShow(challenger)" @click="onReady">{{$t('lang.matchDetails.ready')}}</el-button>
+                <span style="margin-left: 10%" v-else-if="challenger.ready===false">{{$t('lang.matchDetails.unready')}}</span>
+                <span style="margin-left: 10%" v-else-if="challenger.ready===true">{{$t('lang.matchDetails.already')}}</span>
             </div>
             <el-form>
-                <el-form-item label="color">
+                <el-form-item :label="$t('lang.color.color')">
                     <div :class="getChessClass(challenger.color)"/>
                 </el-form-item>
-                <el-form-item label="role">challenger</el-form-item>
+                <el-form-item label="role">{{$t('lang.role.challenger')}}</el-form-item>
             </el-form>
         </div>
     </div>

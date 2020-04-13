@@ -15,15 +15,15 @@ export default new Router({
         component: () => import('@/views/Layout'),
         children: [{
             path: '/game',
-            name: 'Game',
+            name: 'game',
             component: () => import('@/views/Game')
         }, {
             path: '/settings',
-            name: 'Settings',
+            name: 'settings',
             component: () => import('@/views/Settings')
         }, {
             path: '/about',
-            name: 'About',
+            name: 'about' ,
             component: () => import('@/views/About')
         }]
     }],

@@ -8,7 +8,6 @@ import (
 	"gobang/lock"
 	"gobang/redis"
 	"gobang/util"
-	"log"
 )
 
 func SetReady(rid string, pid string, ready bool) (*entity.Room, error) {
@@ -17,7 +16,7 @@ func SetReady(rid string, pid string, ready bool) (*entity.Room, error) {
 
 	room, err := redis.GetRoom(rid)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -25,7 +24,7 @@ func SetReady(rid string, pid string, ready bool) (*entity.Room, error) {
 
 	if !inRoom {
 		err = fmt.Errorf("error: Player %v not in room %v", pid, rid)
-		log.Println(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -35,7 +34,7 @@ func SetReady(rid string, pid string, ready bool) (*entity.Room, error) {
 		room.Challenger.Ready = ready
 	} else {
 		err = fmt.Errorf("error: Role %v cannot get ready", role)
-		log.Println(err)
+		logger.Error(err)
 		return nil, err
 	}
 	room.Started = room.Host.Ready && room.Challenger.Ready
@@ -44,6 +43,7 @@ func SetReady(rid string, pid string, ready bool) (*entity.Room, error) {
 	}
 
 	if err = redis.SetRoom(room); err != nil {
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -56,24 +56,24 @@ func MakeStep(rid string, c entity.Chess) (bool, *dto.GameOverDTO, *entity.Room,
 
 	room, err := redis.GetRoom(rid)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return false, nil, nil, err
 	}
 	if room.Started {
 		room.Steps = append(room.Steps, c)
 	} else {
 		err = fmt.Errorf("error: Can not make step while game is not started")
-		log.Println(err)
+		logger.Error(err)
 		return false, nil, nil, err
 	}
 
 	over, gameOverDTO, err := CheckFive(room)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return false, nil, nil, err
 	}
 	if err = redis.SetRoom(room); err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return false, nil, nil, err
 	}
 	return over, gameOverDTO, room, nil
@@ -120,20 +120,20 @@ func RetractStep(pid string, rid string, consent int) (string, *entity.Room, int
 
 	room, err := redis.GetRoom(rid)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return "", nil, 0, err
 	}
 	length := len(room.Steps)
 	if !room.Started || length == 0 {
 		err = fmt.Errorf("error: room %v is not started or there is no step", rid)
-		log.Println(err)
+		logger.Error(err)
 		return "", nil, 0, err
 	}
 
 	inRoom, role, _ := isInRoom(pid, room)
 	if !inRoom || role == "spectator" {
 		err = fmt.Errorf("error: player %v is not playing in room %v", pid, rid)
-		log.Println(err)
+		logger.Error(err)
 		return "", nil, 0, err
 	}
 
@@ -151,7 +151,7 @@ func RetractStep(pid string, rid string, consent int) (string, *entity.Room, int
 	if consent == 2 {
 		if length == 1 && color == constants.WHITE {
 			err = fmt.Errorf("error: there is no white step so white side can't retract")
-			log.Println(err)
+			logger.Error(err)
 			return "", nil, 0, err
 		}
 		lastColor := int8((length - 1) % 2)
@@ -165,6 +165,7 @@ func RetractStep(pid string, rid string, consent int) (string, *entity.Room, int
 	}
 
 	if err = redis.SetRoom(room); err != nil {
+		logger.Error(err)
 		return "", nil, 0, err
 	}
 	return opponentId, room, count, err
@@ -176,20 +177,20 @@ func Surrender(pid string, rid string) (*dto.GameOverDTO, *entity.Room, error) {
 
 	room, err := redis.GetRoom(rid)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return nil, nil, err
 	}
 
 	if !room.Started {
 		err = fmt.Errorf("error: room %v is not started", rid)
-		log.Println(err)
+		logger.Error(err)
 		return nil, nil, err
 	}
 
 	inRoom, role, _ := isInRoom(pid, room)
 	if !inRoom || role == "spectator" {
 		err = fmt.Errorf("error: player %v is not playing in room %v", pid, rid)
-		log.Println(err)
+		logger.Error(err)
 		return nil, nil, err
 	}
 
@@ -208,7 +209,7 @@ func Surrender(pid string, rid string) (*dto.GameOverDTO, *entity.Room, error) {
 
 	PrepareNewGame(room)
 	if err = redis.SetRoom(room); err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return nil, nil, err
 	}
 
@@ -221,26 +222,26 @@ func Draw(pid string, rid string, consent int) (string, *entity.Room, error) {
 
 	room, err := redis.GetRoom(rid)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return "", nil, err
 	}
 	if !room.Started {
 		err = fmt.Errorf("error: room %v is not started", rid)
-		log.Println(err)
+		logger.Error(err)
 		return "", nil, err
 	}
 
 	inRoom, role, _ := isInRoom(pid, room)
 	if !inRoom || role == "spectator" {
 		err = fmt.Errorf("error: player %v is not playing in room %v", pid, rid)
-		log.Println(err)
+		logger.Error(err)
 		return "", nil, err
 	}
 
 	if consent == 2 {
 		PrepareNewGame(room)
 		if err = redis.SetRoom(room); err != nil {
-			log.Println(err)
+			logger.Error(err)
 			return "", nil, err
 		}
 	}

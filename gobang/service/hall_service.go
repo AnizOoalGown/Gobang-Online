@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"gobang/entity"
 	"gobang/redis"
 )
@@ -9,7 +8,7 @@ import (
 func HallChat(msg *entity.DialogMsg) error {
 	err := redis.AddDialogMsg(msg)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error(err)
 	}
 
 	return err
@@ -18,7 +17,7 @@ func HallChat(msg *entity.DialogMsg) error {
 func GetHallDialog() (*[]entity.DialogMsg, error) {
 	dialog, err := redis.GetDialog()
 	if err != nil {
-		fmt.Println(err)
+		logger.Error(err)
 	}
 	return dialog, err
 }
