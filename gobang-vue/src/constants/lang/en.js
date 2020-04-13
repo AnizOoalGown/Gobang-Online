@@ -75,7 +75,8 @@ export const lang = {
         button: {
             retract: 'retract',
             surrender: 'surrender',
-            draw: 'draw'
+            draw: 'draw',
+            exit: 'exit'
         },
         message: {
             clickReady: 'Click ready to start',

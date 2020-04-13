@@ -6,7 +6,7 @@
             <el-button size="mini" @click="onRefresh" style="float: right; margin-right: 10px">{{$t('lang.roomTable.refresh')}}</el-button>
         </div>
 
-        <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="25%">
+        <el-dialog :title="dialogTitle" :visible.sync="dialog.visible" width="25%">
             <el-form>
                 <el-form-item :label="$t('lang.roomTable.dialog.color')">
                     <el-select v-model="dialog.color">
@@ -49,7 +49,6 @@
         data() {
             return {
                 dialog: {
-                    title: this.$t('lang.roomTable.dialog.title'),
                     visible: false,
                     color: color.black
                 }
@@ -89,6 +88,9 @@
             }
         },
         computed: {
+            dialogTitle() {
+                return this.$t('lang.roomTable.dialog.title')
+            },
             rooms() {
                 return this.$store.getters.rooms
             }

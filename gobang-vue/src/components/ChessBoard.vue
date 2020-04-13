@@ -93,31 +93,23 @@
                     context.fill()
                 }
             },
-            drawLabel(i, j, color) {
+            drawLabel(i, j) {
                 let context = this.context
                 context.beginPath()
                 context.arc(m +i * d, m + j * d, r / 3, 0, 2 * Math.PI)
                 context.closePath()
-                if (color === constant.black) {
-                    context.fillStyle = '#000000'
-                }
-                else if (color === constant.white) {
-                    context.fillStyle = '#FFFFFF'
-                }
-                else {
-                    context.fillStyle = '#FFB90F'
-                }
+                context.fillStyle = '#FFB90F'
                 context.fill()
             },
             labelLastStep() {
                 let length = this.steps.length
                 if (length > 0) {
                     let lastStep = this.steps[length - 1]
-                    this.drawLabel(lastStep.i, lastStep.j, -1)
+                    this.drawLabel(lastStep.i, lastStep.j)
                     if (length > 1) {
                         let index = length - 2
                         let c = this.steps[index]
-                        this.drawLabel(c.i, c.j, index % 2)
+                        this.drawChess(c.i, c.j, index % 2)
                     }
                 }
             },
