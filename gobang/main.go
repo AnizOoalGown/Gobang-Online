@@ -3,10 +3,11 @@ package main
 import (
 	"gobang/config"
 	"gobang/router"
+	"strconv"
 )
 
 func main() {
-	addr := ":" + config.Config.Get("server.port").(string)
+	addr := ":" + strconv.Itoa(config.Config.Get("server.port").(int))
 	r := router.InitRouter()
 	r.Run(addr)
 }
