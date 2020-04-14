@@ -2,6 +2,7 @@ package redis
 
 import (
 	"github.com/gomodule/redigo/redis"
+	"gobang/config"
 	"time"
 )
 
@@ -10,8 +11,8 @@ var (
 )
 
 func init() {
-	addr := "150.158.104.248:6379"
-	password := "qwerty"
+	addr := config.Config.Get("redis.addr").(string)
+	password := config.Config.Get("redis.pwd").(string)
 
 	pool = &redis.Pool{
 		Dial: func() (conn redis.Conn, err error) {

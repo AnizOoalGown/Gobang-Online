@@ -5,6 +5,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/weekface/mgorus"
+	"gobang/config"
 	"gobang/constants"
 	"gobang/dto"
 	"gobang/entity"
@@ -22,7 +23,10 @@ var (
 
 func InitMelody() *melody.Melody {
 	logger = logrus.New()
-	hooker, err := mgorus.NewHooker("150.158.104.248:27017", "gobang", "log")
+	addr := config.Config.Get("mongodb.addr").(string)
+	db := config.Config.Get("mongodb.db").(string)
+	collection := config.Config.Get("mongodb.collection").(string)
+	hooker, err := mgorus.NewHooker(addr, db, collection)
 	if err == nil {
 		logger.Hooks.Add(hooker)
 	}

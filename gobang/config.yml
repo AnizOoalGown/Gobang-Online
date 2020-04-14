@@ -1,0 +1,8 @@
+redis:
+  addr: 150.158.104.248:6379
+  pwd: qwerty
+
+mongodb:
+  addr: 150.158.104.248:27017
+  db: gobang
+  collection: log
