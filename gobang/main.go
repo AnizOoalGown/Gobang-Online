@@ -1,8 +1,12 @@
 package main
 
-import "gobang/router"
+import (
+	"gobang/config"
+	"gobang/router"
+)
 
 func main() {
+	addr := ":" + config.Config.Get("server.port").(string)
 	r := router.InitRouter()
-	r.Run(":8080")
+	r.Run(addr)
 }

@@ -3,7 +3,7 @@ module.exports = {
         port: 5555,
         proxy: {
             '/ws': {
-                target: 'http://localhost:8080',
+                target: 'http://localhost:5556',
                 ws: true,
                 changeOrigin: true,
             },
