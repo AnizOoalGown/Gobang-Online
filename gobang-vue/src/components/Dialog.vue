@@ -11,14 +11,14 @@
             </div>
         </div>
         <div>
-            <el-input size="mini" v-model="input" class="input"/>
+            <el-input size="mini" v-model="input" class="input" @keyup.enter.native="onSend"/>
             <el-button size="mini" @click="onSend" class="send-button">{{$t('lang.dialog.send')}}</el-button>
         </div>
     </div>
 </template>
 
 <script>
-    import {getHallDialog, hallChat, roomChat} from "../websocket/send-api";
+    import {hallChat, roomChat} from "../websocket/send-api";
 
     export default {
         name: "Dialog",
@@ -68,7 +68,13 @@
         },
         mounted() {
             if (this.roomId === 'hall') {
-                getHallDialog()
+                let date = new Date()
+                this.$store.dispatch('setHallDialogMsg', {
+                    time: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDay() + ' '
+                    + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds(),
+                    from: '系统消息',
+                    content: 'Settings里设置语言'
+                })
             }
         }
     }

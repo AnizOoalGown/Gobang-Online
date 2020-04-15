@@ -2,9 +2,9 @@
     <div class="shadow-container">
         <h2 class="title">Welcome to Gobang Online!</h2>
         <el-divider/>
-        <el-form class="form">
+        <el-form class="form" @submit.native.prevent>
             <el-form-item>
-                <el-input v-model="input" :placeholder="$t('lang.login.placeholder')"></el-input>
+                <el-input v-model="input" :placeholder="$t('lang.login.placeholder')" @keyup.enter.native="onLogin"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="onLogin">{{$t('lang.login.login')}}</el-button>

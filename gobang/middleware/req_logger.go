@@ -20,6 +20,9 @@ func ReqLogger() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		startTime := time.Now()
+
+		c.Next()
+
 		reqProto := c.Request.Proto
 		reqMethod := c.Request.Method
 		reqUri := c.Request.RequestURI
@@ -27,21 +30,14 @@ func ReqLogger() gin.HandlerFunc {
 		clientIP := c.ClientIP()
 
 		fields := logrus.Fields{
+			"client_ip":   clientIP,
 			"protocol":    reqProto,
 			"method":      reqMethod,
 			"uri":         reqUri,
 			"status_code": statusCode,
-			"client_ip":   clientIP,
+			"start_time":  startTime,
 		}
 
-		logger.WithFields(fields).Info("client connects")
-
-		c.Next()
-
-		endTime := time.Now()
-		latencyTime := endTime.Sub(startTime).Truncate(time.Second).Seconds()
-		fields["latency_time"] = latencyTime
-
-		logger.WithFields(fields).Info("client disconnects")
+		logger.WithFields(fields).Info()
 	}
 }

@@ -155,11 +155,18 @@ func LeaveRoom(pid string, rid string) (*entity.Room, *dto.GameOverDTO, error) {
 			if err = redis.DelRoom(rid); err != nil {
 				logger.Error(err)
 				lock.RoomLock.Unlock(rid)
-				lock.RoomLock.Delete(rid)
 				return nil, nil, err
 			}
 			r.Host = entity.PlayerDetails{}
+			for _, player := range r.Spectators {
+				if err := SetPlayerStatus(player.Id, "leisure"); err != nil {
+					logger.Error(err)
+					lock.RoomLock.Unlock(rid)
+					return nil, nil, err
+				}
+			}
 			lock.RoomLock.Unlock(rid)
+			lock.RoomLock.Delete(rid)
 			return r, nil, nil
 		} else {
 			if r.Started {

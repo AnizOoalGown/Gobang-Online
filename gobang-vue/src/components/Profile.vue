@@ -6,7 +6,7 @@
         <div class="scrollbar">
             <el-avatar :size="50" :src="circleUrl"></el-avatar>
             <el-form :model="player">
-                <el-form-item :label="$t('lang.profile.id')">{{player.id}}</el-form-item>
+<!--                <el-form-item :label="$t('lang.profile.id')">{{player.id}}</el-form-item>-->
                 <el-form-item :label="$t('lang.profile.name')">{{player.name}}</el-form-item>
                 <el-form-item :label="$t('lang.profile.status')">{{$t('lang.status.' + player.status)}}</el-form-item>
             </el-form>

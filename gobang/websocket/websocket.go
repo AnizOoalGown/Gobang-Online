@@ -78,13 +78,7 @@ func Disconnect(s *melody.Session) {
 		SendErr(s, err)
 	}
 	for _, room := range *rooms {
-		r, gameOverDTO, err := service.LeaveRoom(id, room.Id)
-		if err != nil {
-			SendErr(s, err)
-		}
-		if gameOverDTO != nil {
-			SendGameOver(r, gameOverDTO)
-		}
+		SendLeaveRoom(s, id, room.Id)
 	}
 }
 
@@ -139,6 +133,42 @@ func SendGameOver(room *entity.Room, gameOverDTO *dto.GameOverDTO) {
 	}
 
 	Send2Room(room, msg)
+}
+
+func SendLeaveRoom(s *melody.Session, pid string, rid string) {
+	room, gameOverDTO, err := service.LeaveRoom(pid, rid)
+	if err != nil {
+		SendErr(s, err)
+		return
+	}
+
+	msg := &dto.Message{
+		Code: constants.LeaveRoom,
+	}
+
+	if room.Host.Id != "" {
+		msg.Data = room
+	} else {
+		msg.Code = constants.DelRoom
+		msg.Data = rid
+		if !s.IsClosed() {
+			Send(s, msg)
+		}
+
+		players, err := service.GetPlayers()
+		if err != nil {
+			SendErr(s, err)
+		}
+		Broadcast(&dto.Message{
+			Code: constants.GetPlayers,
+			Data: players,
+		})
+	}
+	Send2Room(room, msg)
+
+	if gameOverDTO != nil {
+		SendGameOver(room, gameOverDTO)
+	}
 }
 
 func Receive(s *melody.Session, msgByte []byte) {

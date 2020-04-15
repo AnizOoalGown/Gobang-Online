@@ -79,6 +79,16 @@ func CreateRoom(s *melody.Session, msg *dto.Message) {
 
 	msg.Data = room
 	Send(s, msg)
+
+	rooms, err := service.GetRooms()
+	if err != nil {
+		SendErr(s, err)
+		return
+	}
+	Broadcast(&dto.Message{
+		Code: constants.GetRooms,
+		Data: rooms,
+	})
 }
 
 func EnterRoom(s *melody.Session, msg *dto.Message) {
@@ -108,24 +118,7 @@ func LeaveRoom(s *melody.Session, msg *dto.Message) {
 		return
 	}
 
-	room, gameOverDTO, err := service.LeaveRoom(pid, rid)
-	if err != nil {
-		SendErr(s, err)
-		return
-	}
-
-	if room.Host.Id != "" {
-		msg.Data = room
-	} else {
-		msg.Code = constants.DelRoom
-		msg.Data = rid
-		Send(s, msg)
-	}
-	Send2Room(room, msg)
-
-	if gameOverDTO != nil {
-		SendGameOver(room, gameOverDTO)
-	}
+	SendLeaveRoom(s, pid, rid)
 }
 
 func RoomChat(s *melody.Session, msg *dto.Message) {
