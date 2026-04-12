@@ -1,8 +1,6 @@
-# Gobang Online V0.1
+# Gobang Online V0.1 (已废弃)
 
-##### 演示地址
-
-[http://150.158.104.248:5555/](http://150.158.104.248:5555/)
+> ⚠️ **此仓库已废弃，最新版本请访问：** [gobang-online-v2](https://github.com/AnizOoalGown/gobang-online-v2)
 
 ##### 项目介绍
 
